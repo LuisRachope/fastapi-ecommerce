@@ -208,3 +208,5 @@ __marimo__/
 
 # Other IDEs and editors
 *.vscode/
+.venv/
+venv/

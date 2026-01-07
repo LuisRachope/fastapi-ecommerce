@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from app.presentation.ping import router as ping_router
+from app.presentation.example import router as ping_router
 
 app = FastAPI(
     title="E-Commerce API",

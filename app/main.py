@@ -1,35 +1,32 @@
 from fastapi import FastAPI
 
-from app.presentation.example import router as ping_router
+from app.core.config import settings
 
-app = FastAPI(
-    title="E-Commerce API",
-    version="1.0.0",
-    description="API de E-commerce",
-    docs_url="/ui",
-)
+from app.presentation.api.v1.endpoints.ping import router as ping_router
+from app.presentation.api.v1.endpoints.product import router as product_router
 
-def init_app():
-    app = _init_fast_api_app()
-    return app
+
+def _get_app_args() -> dict:
+    return dict(
+        title=settings.API_TITLE,
+        version=settings.API_VERSION,
+        description=settings.API_DESCRIPTION,
+        docs_url=settings.DOCS_URL,
+        redoc_url=settings.REDOC_URL,
+    )
 
 def _init_fast_api_app() -> FastAPI:
     app = FastAPI(**_get_app_args())
     app = _config_app_routers(app)
     return app
 
-def _get_app_args() -> dict:
-    return dict(
-        title="E-Commerce API",
-        version="1.0.0",
-        description="API de E-commerce",
-        docs_url="/ui",
-        redoc_url=None,
-    )
+def init_app() -> FastAPI:
+    return _init_fast_api_app()
 
 def _config_app_routers(app: FastAPI):
     routers = [
         ping_router,
+        product_router,
     ]
     [app.include_router(router) for router in routers]
     return app

@@ -39,8 +39,7 @@ async def create_product(
             price=request.price,
             quantity=request.quantity,
         )
-        result = await service.create_product(dto)
-        return result.to_dict()
+        return await service.create_product(dto)
     except ApplicationException as e:
         raise HTTPException(status_code=e.status_code, detail=e.message)
     except Exception as e:
@@ -65,8 +64,30 @@ async def get_all_products(
     - **limit**: Limite de itens a retornar (padrão: 10, máximo: 100)
     """
     try:
-        products = await service.get_all_products(skip=skip, limit=limit)
-        return products
+        return await service.get_all_products(skip=skip, limit=limit)
+    except ApplicationException as e:
+        raise HTTPException(status_code=e.status_code, detail=e.message)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+
+@router.get(
+    "/{product_id}",
+    response_model=ProductResponse,
+    summary="Obter produto por ID",
+    description="Recupera um produto específico pelo seu ID",
+)
+async def get_product_by_id(
+    product_id: UUID,
+    service: ProductService = Depends(get_product_service),
+):
+    """
+    Recupera um produto específico pelo seu ID
+    
+    - **product_id**: ID do produto
+    """
+    try:
+        return await service.get_product_by_id(product_id)
     except ApplicationException as e:
         raise HTTPException(status_code=e.status_code, detail=e.message)
     except Exception as e:

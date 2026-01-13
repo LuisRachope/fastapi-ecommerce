@@ -2,7 +2,7 @@ from typing import List
 from app.domain.entities.product import ProductEntity
 from app.domain.repositories.product_repository import ProductRepository
 from app.application.dtos.product_dto import CreateProductDTO, ProductResponseDTO
-from app.core.exceptions import ValidationException
+from app.core.exceptions import ApplicationException, ValidationException
 from decimal import Decimal
 
 
@@ -66,3 +66,17 @@ class ProductService:
         """Recupera todos os produtos com paginação"""
         products = await self.product_repository.get_all(skip=skip, limit=limit)
         return [self._to_response_dto(p) for p in products]
+    
+    async def get_product_by_id(self, product_id: str) -> ProductResponseDTO:
+        """Recupera um produto por ID"""
+        try:
+            product = await self.product_repository.get_by_id(product_id)
+            if not product:
+                raise ValidationException(f"Produto com ID {product_id} não encontrado")
+            return self._to_response_dto(product)
+        except ValidationException:
+            raise
+        except ApplicationException as e:
+            raise ApplicationException(status_code=e.status_code, detail=e.message)
+        except Exception as e:
+            raise ValidationException(f"Erro ao recuperar produto com ID {product_id}: {str(e)}")

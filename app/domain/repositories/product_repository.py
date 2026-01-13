@@ -11,3 +11,7 @@ class ProductRepository(ABC):
     @abstractmethod
     async def get_all(self, skip: int = 0, limit: int = 10) -> List[ProductEntity]:
         pass
+
+    @abstractmethod
+    async def get_by_id(self, product_id: str) -> ProductEntity | None:
+        pass

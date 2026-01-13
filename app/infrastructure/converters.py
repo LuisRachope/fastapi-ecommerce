@@ -1,6 +1,6 @@
 from datetime import datetime
 from app.domain.entities.product import ProductEntity
-from app.infrastructure.database import ProductORM
+from app.infrastructure.persistence.models import ProductORM
 
 
 class ProductConverter:

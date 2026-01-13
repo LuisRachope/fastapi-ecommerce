@@ -3,7 +3,8 @@ from typing import List
 from app.domain.entities.product import ProductEntity
 from app.domain.repositories.product_repository import ProductRepository
 
-from app.infrastructure.database import ProductORM, async_session
+from app.infrastructure.persistence.models import ProductORM
+from app.infrastructure.persistence.database import async_session
 from app.infrastructure.converters import ProductConverter
 from sqlalchemy import select
 

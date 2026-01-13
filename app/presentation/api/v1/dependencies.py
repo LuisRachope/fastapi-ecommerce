@@ -1,5 +1,5 @@
 from app.application.services.product_service import ProductService
-from app.infrastructure.persistence.repositories.product_repository_impl import InMemoryProductRepository
+from app.infrastructure.persistence.repositories.product_repository_impl import SQLProductRepository
 
 class DependencyContainer:
     def __init__(self):
@@ -10,7 +10,7 @@ class DependencyContainer:
 
     def _initialize_repositories(self):
         """Initialize all repositories as singletons"""
-        self._repositories['product_repository'] = InMemoryProductRepository()
+        self._repositories['product_repository'] = SQLProductRepository()
     
     def _initialize_services(self):
         """Initialize all services with repository dependencies"""

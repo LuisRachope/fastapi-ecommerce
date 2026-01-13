@@ -46,3 +46,28 @@ async def create_product(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
+@router.get(
+    "",
+    response_model=list[ProductResponse],
+    summary="Listar produtos",
+    description="Recupera uma lista de produtos com paginação",
+)
+async def get_all_products(
+    skip : int = Query(0, ge=0, description="Número de itens a pular"),
+    limit : int = Query(10, ge=1, le=100, description="Limite de itens a retornar"),
+    service: ProductService = Depends(get_product_service),
+):
+    """
+    Recupera uma lista de produtos com paginação
+    
+    - **skip**: Número de itens a pular (padrão: 0)
+    - **limit**: Limite de itens a retornar (padrão: 10, máximo: 100)
+    """
+    try:
+        products = await service.get_all_products(skip=skip, limit=limit)
+        return products
+    except ApplicationException as e:
+        raise HTTPException(status_code=e.status_code, detail=e.message)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

@@ -61,3 +61,8 @@ class ProductService:
             created_at=product.created_at,
             updated_at=product.updated_at,
         )
+
+    async def get_all_products(self, skip: int = 0, limit: int = 10) -> List[ProductResponseDTO]:
+        """Recupera todos os produtos com paginação"""
+        products = await self.product_repository.get_all(skip=skip, limit=limit)
+        return [self._to_response_dto(p) for p in products]

@@ -1,9 +1,10 @@
-from fastapi import APIRouter, HTTPException, Depends, Query
+from fastapi import APIRouter, HTTPException, Depends, Query, status
 from uuid import UUID
 from app.application.services.product_service import ProductService
 from app.presentation.schemas.product_schema import (
-    CreateProductRequest,
-    ProductResponse,
+    CreateProductInput,
+    ProductOutput,
+    UpdateProductInput
 )
 from app.presentation.api.v1.dependencies import get_product_service
 from app.core.exceptions import ApplicationException
@@ -13,13 +14,13 @@ router = APIRouter(prefix="/products", tags=["products"])
 
 @router.post(
     "",
-    response_model=ProductResponse,
+    response_model=ProductOutput,
     status_code=201,
     summary="Criar novo produto",
     description="Cria um novo produto no banco de dados",
 )
 async def create_product(
-    request: CreateProductRequest,
+    request: CreateProductInput,
     service: ProductService = Depends(get_product_service),
 ):
     """
@@ -43,12 +44,12 @@ async def create_product(
     except ApplicationException as e:
         raise HTTPException(status_code=e.status_code, detail=e.message)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 
 @router.get(
     "",
-    response_model=list[ProductResponse],
+    response_model=list[ProductOutput],
     summary="Listar produtos",
     description="Recupera uma lista de produtos com paginação",
 )
@@ -68,12 +69,12 @@ async def get_all_products(
     except ApplicationException as e:
         raise HTTPException(status_code=e.status_code, detail=e.message)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
     
 
 @router.get(
     "/{product_id}",
-    response_model=ProductResponse,
+    response_model=ProductOutput,
     summary="Obter produto por ID",
     description="Recupera um produto específico pelo seu ID",
 )
@@ -91,4 +92,25 @@ async def get_product_by_id(
     except ApplicationException as e:
         raise HTTPException(status_code=e.status_code, detail=e.message)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+    
+@router.patch(
+    "/{product_id}",
+    response_model=ProductOutput,
+    summary="Atualizar produto",
+    description="Atualiza os detalhes de um produto existente",
+)
+async def patch_product_by_id(
+    product_id: UUID,
+    body: UpdateProductInput,
+    service: ProductService = Depends(get_product_service),
+):
+    """
+    Atualiza os detalhes de um produto existente
+    """
+    try:
+        return await service.patch_product_by_id(product_id, body)
+    except ApplicationException as e:
+        raise HTTPException(status_code=e.status_code, detail=e.message)
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))

@@ -1,13 +1,14 @@
 from pydantic import BaseModel, Field
+from typing import Annotated
 from decimal import Decimal
 from datetime import datetime
 from uuid import UUID
 
 
-class CreateProductRequest(BaseModel):
+class CreateProductInput(BaseModel):
     name: str = Field(..., min_length=1, max_length=255, description="Nome do produto")
     description: str = Field(..., min_length=1, max_length=1000, description="Descrição do produto")
-    price: Decimal = Field(..., gt=0, decimal_places=2, description="Preço do produto")
+    price: Annotated[Decimal, Field(..., gt=0, description="Preço do produto")]
     quantity: int = Field(..., ge=0, description="Quantidade em estoque")
     
     class Config:
@@ -21,7 +22,7 @@ class CreateProductRequest(BaseModel):
         }
 
 
-class ProductResponse(BaseModel):
+class ProductOutput(BaseModel):
     id: UUID
     name: str
     description: str
@@ -45,8 +46,24 @@ class ProductResponse(BaseModel):
         }
 
 
-class ProductListResponse(BaseModel):
+class ProductListOutput(BaseModel):
     total: int
     skip: int
     limit: int
-    products: list[ProductResponse]
+    products: list[ProductOutput]
+
+class UpdateProductInput(BaseModel):
+    name: str | None = Field(None, min_length=1, max_length=255, description="Nome do produto")
+    description: str | None = Field(None, min_length=1, max_length=1000, description="Descrição do produto")
+    price: Annotated[Decimal | None, Field(None, gt=0, description="Preço do produto")]
+    quantity: int | None = Field(None, ge=0, description="Quantidade em estoque")
+    
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "name": "Notebook",
+                "description": "Notebook de alta performance",
+                "price": 3999.99,
+                "quantity": 10,
+            }
+        }

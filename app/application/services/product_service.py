@@ -1,9 +1,12 @@
 from typing import List
+from app.core.utils import update_columns_obj
 from app.domain.entities.product import ProductEntity
 from app.domain.repositories.product_repository import ProductRepository
 from app.application.dtos.product_dto import CreateProductDTO, ProductResponseDTO
 from app.core.exceptions import ApplicationException, ValidationException
 from decimal import Decimal
+
+from app.presentation.schemas.product_schema import CreateProductInput
 
 
 class ProductService:
@@ -80,3 +83,27 @@ class ProductService:
             raise ApplicationException(status_code=e.status_code, detail=e.message)
         except Exception as e:
             raise ValidationException(f"Erro ao recuperar produto com ID {product_id}: {str(e)}")
+        
+    async def patch_product_by_id(self, product_id: str, body: CreateProductInput) -> ProductResponseDTO:
+        """Atualiza parcialmente um produto por ID"""
+        try:
+            product : ProductEntity = await self.product_repository.get_by_id(product_id)
+            if not product:
+                raise ValidationException(f"Produto com ID {product_id} não encontrado")
+            
+            product = update_columns_obj(
+                product,
+                name=body.name,
+                description=body.description,
+                price=body.price,
+                quantity=body.quantity,
+            )
+            
+            updated_product = await self.product_repository.update(product)
+            return self._to_response_dto(updated_product)
+        except ValidationException:
+            raise
+        except ApplicationException as e:
+            raise ApplicationException(status_code=e.status_code, detail=e.message)
+        except Exception as e:
+            raise ValidationException(f"Erro ao atualizar produto com ID {product_id}: {str(e)}")

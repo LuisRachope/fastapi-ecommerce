@@ -78,3 +78,25 @@ class SQLProductRepository(ProductRepository):
         except Exception as e:
             logger.error(f"Erro interno ao buscar produto {product_id}: {str(e)}", exc_info=True)
             raise ApplicationException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Erro interno ao buscar produto {product_id}")
+
+    async def update(self, product: ProductEntity) -> ProductEntity:
+        """Update an existing product in the database."""
+        try:
+            logger.info(f"Atualizando produto: {product.id}")
+            async with async_session() as session:
+                orm_obj = self.converter.entity_to_orm(product)
+                orm_obj = await session.merge(orm_obj)
+                await session.commit()
+                await session.refresh(orm_obj)
+                result = self.converter.orm_to_entity(orm_obj)
+
+                logger.info(f"Produto atualizado: {result.id}")
+                return result
+        except SQLAlchemyError as e:
+            logger.error(f"Erro BD ao atualizar produto {product.id}: {str(e)}", exc_info=True)
+            raise ApplicationException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Erro BD ao atualizar produto {product.id}")
+        except ApplicationException:
+            raise
+        except Exception as e:
+            logger.error(f"Erro interno ao atualizar produto {product.id}: {str(e)}", exc_info=True)
+            raise ApplicationException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Erro interno ao atualizar produto {product.id}")

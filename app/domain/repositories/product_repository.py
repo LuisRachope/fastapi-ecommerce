@@ -15,3 +15,7 @@ class ProductRepository(ABC):
     @abstractmethod
     async def get_by_id(self, product_id: str) -> ProductEntity | None:
         pass
+
+    @abstractmethod
+    async def update(self, product: ProductEntity) -> ProductEntity:
+        pass

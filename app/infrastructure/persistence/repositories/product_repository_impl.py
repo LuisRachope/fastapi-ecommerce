@@ -36,10 +36,10 @@ class SQLProductRepository(ProductRepository):
                 return result
         except SQLAlchemyError as e:
             logger.error(f"Erro BD ao criar produto: {str(e)}", exc_info=True)
-            raise ApplicationException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Erro BD ao criar produto")
+            raise ApplicationException(message="Erro BD ao criar produto", status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except Exception as e:
             logger.error(f"Erro interno ao criar produto: {str(e)}", exc_info=True)
-            raise ApplicationException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Erro interno ao criar produto")
+            raise ApplicationException(message="Erro interno ao criar produto", status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     async def get_all(self, skip: int = 0, limit: int = 10) -> List[ProductEntity]:
         """Retrieve all products with pagination."""
@@ -53,10 +53,10 @@ class SQLProductRepository(ProductRepository):
                 return [self.converter.orm_to_entity(orm) for orm in rows]
         except SQLAlchemyError as e:
             logger.error(f"Erro BD ao recuperar produtos: {str(e)}", exc_info=True)
-            raise ApplicationException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Erro BD ao recuperar produtos")
+            raise ApplicationException(message="Erro BD ao recuperar produtos", status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except Exception as e:
             logger.error(f"Erro interno ao recuperar produtos: {str(e)}", exc_info=True)
-            raise ApplicationException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Erro interno ao recuperar produtos")
+            raise ApplicationException(message="Erro interno ao recuperar produtos", status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     async def get_by_id(self, product_id: str) -> ProductEntity | None:
         """Get a product by ID."""
@@ -74,10 +74,10 @@ class SQLProductRepository(ProductRepository):
                     return None
         except SQLAlchemyError as e:
             logger.error(f"Erro BD ao buscar produto {product_id}: {str(e)}", exc_info=True)
-            raise ApplicationException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Erro ao buscar produto {product_id}")
+            raise ApplicationException(message=f"Erro ao buscar produto {product_id}", status_code=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             logger.error(f"Erro interno ao buscar produto {product_id}: {str(e)}", exc_info=True)
-            raise ApplicationException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Erro interno ao buscar produto {product_id}")
+            raise ApplicationException(message=f"Erro interno ao buscar produto {product_id}", status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     async def update(self, product: ProductEntity) -> ProductEntity:
         """Update an existing product in the database."""
@@ -94,9 +94,9 @@ class SQLProductRepository(ProductRepository):
                 return result
         except SQLAlchemyError as e:
             logger.error(f"Erro BD ao atualizar produto {product.id}: {str(e)}", exc_info=True)
-            raise ApplicationException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Erro BD ao atualizar produto {product.id}")
+            raise ApplicationException(message=f"Erro BD ao atualizar produto {product.id}", status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except ApplicationException:
             raise
         except Exception as e:
             logger.error(f"Erro interno ao atualizar produto {product.id}: {str(e)}", exc_info=True)
-            raise ApplicationException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Erro interno ao atualizar produto {product.id}")
+            raise ApplicationException(message=f"Erro interno ao atualizar produto {product.id}", status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)

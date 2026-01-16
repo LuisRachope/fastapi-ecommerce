@@ -57,3 +57,21 @@ def mock_async_session_context(mock_session):
     mock.__aenter__.return_value = mock_session
     mock.__aexit__.return_value = None
     return mock
+
+
+@pytest.fixture
+def patched_async_session(mocker):
+    """
+    Fixture que faz patch automático do async_session.
+    Elimina a necessidade de usar patch() manualmente nos testes.
+    Use isso para simplificar testes de repositório.
+    """
+    mock = MagicMock()
+    mock.__aenter__.return_value = AsyncMock()
+    mock.__aexit__.return_value = None
+    
+    mocker.patch(
+        "app.infrastructure.persistence.repositories.product_repository_impl.async_session",
+        return_value=mock
+    )
+    return mock

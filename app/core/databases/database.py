@@ -2,12 +2,8 @@
 Database configuration module.
 Handles SQLAlchemy async engine, session factory, and ORM models.
 """
-
-from datetime import datetime
-
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from sqlalchemy.orm import declarative_base
-from sqlalchemy import Column, String, Integer, Numeric, DateTime
 
 from app.core.config import settings
 

@@ -9,7 +9,7 @@ from app.domain.entities.order_entity import OrderEntity
 from app.domain.repositories.order_repository import OrderRepository
 from app.infrastructure.converters import OrderConverter
 
-from app.infrastructure.database import async_session
+from app.core.databases.database import async_session
 from sqlalchemy.exc import SQLAlchemyError
 
 logger = logging.getLogger(__name__)

@@ -3,7 +3,7 @@ import logging
 
 from fastapi import status
 
-from app.infrastructure.database import async_session
+from app.core.databases.database import async_session
 from sqlalchemy.exc import SQLAlchemyError
 
 logger = logging.getLogger(__name__)

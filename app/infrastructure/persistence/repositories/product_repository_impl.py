@@ -8,7 +8,7 @@ from app.domain.entities.product_entity import ProductEntity
 from app.domain.repositories.product_repository import ProductRepository
 
 from app.infrastructure.persistence.models import ProductORM
-from app.infrastructure.database import async_session
+from app.core.databases.database import async_session
 from app.infrastructure.converters import ProductConverter
 from sqlalchemy import select, delete
 from sqlalchemy.exc import SQLAlchemyError

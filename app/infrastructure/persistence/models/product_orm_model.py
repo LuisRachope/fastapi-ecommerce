@@ -4,7 +4,7 @@ from sqlalchemy import Column, String, Integer, Numeric, DateTime
 from sqlalchemy.orm import relationship
 
 
-from app.infrastructure.database import Base
+from app.core.databases.database import Base
 
 
 class ProductORM(Base):

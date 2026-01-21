@@ -3,7 +3,7 @@ from datetime import datetime
 from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
-from app.infrastructure.database import Base
+from app.core.databases.database import Base
 
 
 class OrderORM(Base):

@@ -5,7 +5,7 @@ from app.core.config import settings
 from app.presentation.api.v1.endpoints.ping_controller import router as ping_router
 from app.presentation.api.v1.endpoints.product_controller import router as product_router
 from app.presentation.api.v1.endpoints.order_controller import router as order_router
-from app.infrastructure.database import init_db
+from app.core.databases.database import init_db
 
 
 def _get_app_args() -> dict:

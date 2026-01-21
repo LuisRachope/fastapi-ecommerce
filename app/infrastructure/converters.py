@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from app.domain.entities.order_entity import OrderEntity
+from app.domain.entities.order_entity import OrderCompleteEntity, OrderEntity
 from app.domain.entities.order_item_entity import OrderItemEntity
 from app.domain.entities.product_entity import ProductEntity
 from app.infrastructure.persistence.models import ProductORM
@@ -52,6 +52,18 @@ class OrderConverter:
             status=entity.status,
             total_amount=entity.total_amount,
         )
+
+    @staticmethod
+    def orm_to_complete_entity(orm: OrderORM) -> OrderCompleteEntity:
+        items = [OrderItemConverter.orm_to_entity(item_orm) for item_orm in orm.order_items]
+        order_entity = OrderCompleteEntity(
+            id=orm.id,
+            order_date=orm.order_date,
+            status=orm.status,
+            total_amount=orm.total_amount,
+        )
+        order_entity.items = items
+        return order_entity
 
 
 class OrderItemConverter:

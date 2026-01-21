@@ -4,7 +4,7 @@ from fastapi.exceptions import ValidationException
 from app.application.dtos.order_dto import OrderDTO, OrderResponseDTO
 from app.application.dtos.order_item_dto import OrderItemResponseDTO
 from app.core.exceptions import ApplicationException
-from app.domain.entities.order_entity import OrderEntity
+from app.domain.entities.order_entity import OrderCompleteEntity, OrderEntity
 from app.domain.entities.order_item_entity import OrderItemEntity
 from app.domain.repositories.order_item_repository import OrderItemRepository
 from app.domain.repositories.order_repository import OrderRepository
@@ -61,6 +61,38 @@ class OrderService:
             )
         except ValidationException:
             raise
+        except ApplicationException as e:
+            raise ApplicationException(status_code=e.status_code, detail=e.message)
+        except Exception as e:
+            raise ApplicationException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+            )
+
+    async def get_all_orders(self) -> list[OrderResponseDTO]:
+        """Retrieve all orders."""
+        try:
+            orders_entities: list[OrderCompleteEntity] = await self.order_repository.get_all()
+            orders_dtos = []
+            for order_entity in orders_entities:
+                items_dtos = [
+                    OrderItemResponseDTO(
+                        id=item_entity.id,
+                        order_id=item_entity.order_id,
+                        product_id=item_entity.product_id,
+                        quantity=item_entity.quantity,
+                        price=item_entity.price,
+                    )
+                    for item_entity in order_entity.items
+                ]
+                order_dto = OrderResponseDTO(
+                    id=order_entity.id,
+                    order_date=order_entity.order_date,
+                    status=order_entity.status,
+                    total_amount=order_entity.total_amount,
+                    items=items_dtos,
+                )
+                orders_dtos.append(order_dto)
+            return orders_dtos
         except ApplicationException as e:
             raise ApplicationException(status_code=e.status_code, detail=e.message)
         except Exception as e:

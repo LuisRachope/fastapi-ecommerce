@@ -28,3 +28,23 @@ async def create_order(
         raise HTTPException(status_code=e.status_code, detail=e.message)
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
+
+@router.get(
+    "",
+    response_model=list[OrderResponseDTO],
+    summary="Listar pedidos",
+    description="Recupera todos os pedidos",
+)
+async def get_all_orders(
+    service: OrderService = Depends(get_order_service),
+):
+    """
+    Recupera todos os pedidos
+    """
+    try:
+        return await service.get_all_orders()
+    except ApplicationException as e:
+        raise HTTPException(status_code=e.status_code, detail=e.message)
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))

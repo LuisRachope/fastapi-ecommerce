@@ -1,13 +1,16 @@
 import logging
 
 from fastapi import status
+from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import selectinload
 
 from app.core.databases.database import async_session
 from app.core.exceptions import ApplicationException
-from app.domain.entities.order_entity import OrderEntity
+from app.domain.entities.order_entity import OrderCompleteEntity, OrderEntity
 from app.domain.repositories.order_repository import OrderRepository
 from app.infrastructure.converters import OrderConverter
+from app.infrastructure.persistence.models.order_orm_model import OrderORM
 
 logger = logging.getLogger(__name__)
 
@@ -39,5 +42,33 @@ class SQLOrderRepository(OrderRepository):
             logger.error(f"Erro interno ao criar pedido: {str(e)}", exc_info=True)
             raise ApplicationException(
                 message="Erro interno ao criar pedido",
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+    async def get_all(self) -> list[OrderCompleteEntity]:
+        """Retrieve all orders from the database."""
+        try:
+            logger.info("Recuperando todos os pedidos")
+            async with async_session() as session:
+                stmt = select(OrderORM).options(selectinload(OrderORM.order_items))
+                result = await session.execute(stmt)
+                orm_orders = result.scalars().all()
+
+                entities = [
+                    self.converter.orm_to_complete_entity(orm_obj) for orm_obj in orm_orders
+                ]
+                logger.info(f"{len(entities)} pedidos recuperados com itens")
+                result = entities
+                return result
+        except SQLAlchemyError as e:
+            logger.error(f"Erro BD ao recuperar pedidos: {str(e)}", exc_info=True)
+            raise ApplicationException(
+                message="Erro BD ao recuperar pedidos",
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+        except Exception as e:
+            logger.error(f"Erro interno ao recuperar pedidos: {str(e)}", exc_info=True)
+            raise ApplicationException(
+                message="Erro interno ao recuperar pedidos",
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )

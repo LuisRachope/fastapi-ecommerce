@@ -7,3 +7,7 @@ class OrderRepository(ABC):
     @abstractmethod
     async def create(self, order: OrderEntity) -> OrderEntity:
         pass
+
+    @abstractmethod
+    async def get_all(self) -> list[OrderEntity]:
+        pass

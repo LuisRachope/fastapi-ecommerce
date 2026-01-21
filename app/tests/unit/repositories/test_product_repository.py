@@ -1,19 +1,16 @@
-import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
+from fastapi import status
 from sqlalchemy.exc import SQLAlchemyError
 
-from app.infrastructure.persistence.repositories.product_repository_impl import (
-    SQLProductRepository,
-)
 from app.core.exceptions import ApplicationException
-from fastapi import status
+from app.infrastructure.persistence.repositories.product_repository_impl import SQLProductRepository
 
 
 class TestProductRepositoryGetAll:
     @pytest.mark.asyncio
-    async def test_get_all_returns_products_successfully(
-        self, mock_converter, product_entity_list
-    ):
+    async def test_get_all_returns_products_successfully(self, mock_converter, product_entity_list):
         # Arrange
         mock_session = AsyncMock()
         mock_result = MagicMock()
@@ -22,7 +19,7 @@ class TestProductRepositoryGetAll:
 
         with patch(
             "app.infrastructure.persistence.repositories.product_repository_impl.async_session",
-            return_value=AsyncMock(__aenter__=AsyncMock(return_value=mock_session))
+            return_value=AsyncMock(__aenter__=AsyncMock(return_value=mock_session)),
         ):
             mock_converter.orm_to_entity.side_effect = product_entity_list
             repository = SQLProductRepository()
@@ -36,11 +33,14 @@ class TestProductRepositoryGetAll:
             assert result == product_entity_list
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("skip,limit", [
-        (0, 10),
-        (5, 20),
-        (10, 5),
-    ])
+    @pytest.mark.parametrize(
+        "skip,limit",
+        [
+            (0, 10),
+            (5, 20),
+            (10, 5),
+        ],
+    )
     async def test_get_all_with_different_pagination(
         self, mock_converter, product_entity_list, skip, limit
     ):
@@ -52,7 +52,7 @@ class TestProductRepositoryGetAll:
 
         with patch(
             "app.infrastructure.persistence.repositories.product_repository_impl.async_session",
-            return_value=AsyncMock(__aenter__=AsyncMock(return_value=mock_session))
+            return_value=AsyncMock(__aenter__=AsyncMock(return_value=mock_session)),
         ):
             mock_converter.orm_to_entity.side_effect = [product_entity_list[0]]
             repository = SQLProductRepository()
@@ -65,9 +65,7 @@ class TestProductRepositoryGetAll:
             assert len(result) == 1
 
     @pytest.mark.asyncio
-    async def test_get_all_returns_empty_list(
-        self, mock_converter
-    ):
+    async def test_get_all_returns_empty_list(self, mock_converter):
         # Arrange
         mock_session = AsyncMock()
         mock_result = MagicMock()
@@ -76,7 +74,7 @@ class TestProductRepositoryGetAll:
 
         with patch(
             "app.infrastructure.persistence.repositories.product_repository_impl.async_session",
-            return_value=AsyncMock(__aenter__=AsyncMock(return_value=mock_session))
+            return_value=AsyncMock(__aenter__=AsyncMock(return_value=mock_session)),
         ):
             repository = SQLProductRepository()
             repository.converter = mock_converter
@@ -88,16 +86,14 @@ class TestProductRepositoryGetAll:
             assert result == []
 
     @pytest.mark.asyncio
-    async def test_get_all_handles_sqlalchemy_error(
-        self, mock_converter
-    ):
+    async def test_get_all_handles_sqlalchemy_error(self, mock_converter):
         # Arrange
         mock_session = AsyncMock()
         mock_session.execute = AsyncMock(side_effect=SQLAlchemyError("DB Error", None, None))
 
         with patch(
             "app.infrastructure.persistence.repositories.product_repository_impl.async_session",
-            return_value=AsyncMock(__aenter__=AsyncMock(return_value=mock_session))
+            return_value=AsyncMock(__aenter__=AsyncMock(return_value=mock_session)),
         ):
             repository = SQLProductRepository()
             repository.converter = mock_converter
@@ -109,16 +105,14 @@ class TestProductRepositoryGetAll:
         assert exc.value.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
 
     @pytest.mark.asyncio
-    async def test_get_all_handles_generic_exception(
-        self, mock_converter
-    ):
+    async def test_get_all_handles_generic_exception(self, mock_converter):
         # Arrange
         mock_session = AsyncMock()
         mock_session.execute = AsyncMock(side_effect=Exception("Unexpected error"))
 
         with patch(
             "app.infrastructure.persistence.repositories.product_repository_impl.async_session",
-            return_value=AsyncMock(__aenter__=AsyncMock(return_value=mock_session))
+            return_value=AsyncMock(__aenter__=AsyncMock(return_value=mock_session)),
         ):
             repository = SQLProductRepository()
             repository.converter = mock_converter
@@ -130,9 +124,7 @@ class TestProductRepositoryGetAll:
         assert exc.value.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
 
     @pytest.mark.asyncio
-    async def test_get_all_default_pagination_values(
-        self, mock_converter, product_entity_list
-    ):
+    async def test_get_all_default_pagination_values(self, mock_converter, product_entity_list):
         # Arrange
         mock_session = AsyncMock()
         mock_result = MagicMock()
@@ -141,7 +133,7 @@ class TestProductRepositoryGetAll:
 
         with patch(
             "app.infrastructure.persistence.repositories.product_repository_impl.async_session",
-            return_value=AsyncMock(__aenter__=AsyncMock(return_value=mock_session))
+            return_value=AsyncMock(__aenter__=AsyncMock(return_value=mock_session)),
         ):
             mock_converter.orm_to_entity.side_effect = product_entity_list
             repository = SQLProductRepository()

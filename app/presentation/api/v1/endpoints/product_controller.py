@@ -1,13 +1,15 @@
-from fastapi import APIRouter, HTTPException, Depends, Query, status
 from uuid import UUID
+
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+
 from app.application.services.product_service import ProductService
+from app.core.dependencies import get_product_service
+from app.core.exceptions import ApplicationException
 from app.presentation.schemas.product_schema import (
     CreateProductInput,
     ProductOutput,
-    UpdateProductInput
+    UpdateProductInput,
 )
-from app.core.dependencies import get_product_service
-from app.core.exceptions import ApplicationException
 
 router = APIRouter(prefix="/products", tags=["Products"])
 
@@ -25,7 +27,7 @@ async def create_product(
 ):
     """
     Cria um novo produto
-    
+
     - **name**: Nome do produto
     - **description**: Descrição do produto
     - **price**: Preço do produto (> 0)
@@ -33,7 +35,7 @@ async def create_product(
     """
     try:
         from app.application.dtos.product_dto import CreateProductDTO
-        
+
         dto = CreateProductDTO(
             name=request.name,
             description=request.description,
@@ -54,13 +56,13 @@ async def create_product(
     description="Recupera uma lista de produtos com paginação",
 )
 async def get_all_products(
-    skip : int = Query(0, ge=0, description="Número de itens a pular"),
-    limit : int = Query(10, ge=1, le=100, description="Limite de itens a retornar"),
+    skip: int = Query(0, ge=0, description="Número de itens a pular"),
+    limit: int = Query(10, ge=1, le=100, description="Limite de itens a retornar"),
     service: ProductService = Depends(get_product_service),
 ):
     """
     Recupera uma lista de produtos com paginação
-    
+
     - **skip**: Número de itens a pular (padrão: 0)
     - **limit**: Limite de itens a retornar (padrão: 10, máximo: 100)
     """
@@ -70,7 +72,7 @@ async def get_all_products(
         raise HTTPException(status_code=e.status_code, detail=e.message)
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
-    
+
 
 @router.get(
     "/{product_id}",
@@ -84,7 +86,7 @@ async def get_product_by_id(
 ):
     """
     Recupera um produto específico pelo seu ID
-    
+
     - **product_id**: ID do produto
     """
     try:
@@ -93,7 +95,8 @@ async def get_product_by_id(
         raise HTTPException(status_code=e.status_code, detail=e.message)
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
-    
+
+
 @router.patch(
     "/{product_id}",
     response_model=ProductOutput,
@@ -115,6 +118,7 @@ async def patch_product_by_id(
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
+
 @router.delete(
     "/{product_id}",
     status_code=200,
@@ -127,7 +131,7 @@ async def delete_product_by_id(
 ):
     """
     Deleta um produto existente pelo seu ID
-    
+
     - **product_id**: ID do produto
     """
     try:

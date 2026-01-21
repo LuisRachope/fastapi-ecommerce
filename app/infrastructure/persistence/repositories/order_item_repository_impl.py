@@ -1,10 +1,9 @@
-
 import logging
 
 from fastapi import status
+from sqlalchemy.exc import SQLAlchemyError
 
 from app.core.databases.database import async_session
-from sqlalchemy.exc import SQLAlchemyError
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +20,7 @@ class SQLOrderItemRepository(OrderItemRepository):
     async def create(self, order_item: OrderItemEntity) -> OrderItemEntity:
         """Create a new order item in the database."""
         try:
-            logger.info(f"Criando item de pedido")
+            logger.info("Criando item de pedido")
             async with async_session() as session:
                 orm_obj = self.converter.entity_to_orm(order_item)
                 session.add(orm_obj)
@@ -32,7 +31,13 @@ class SQLOrderItemRepository(OrderItemRepository):
                 return result
         except SQLAlchemyError as e:
             logger.error(f"Erro BD ao criar item de pedido: {str(e)}", exc_info=True)
-            raise ApplicationException(message="Erro BD ao criar item de pedido", status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            raise ApplicationException(
+                message="Erro BD ao criar item de pedido",
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
         except Exception as e:
             logger.error(f"Erro interno ao criar item de pedido: {str(e)}", exc_info=True)
-            raise ApplicationException(message="Erro interno ao criar item de pedido", status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)   
+            raise ApplicationException(
+                message="Erro interno ao criar item de pedido",
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )

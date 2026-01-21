@@ -1,8 +1,9 @@
-import pytest
+from datetime import datetime
+from decimal import Decimal
 from unittest.mock import AsyncMock, MagicMock
 from uuid import uuid4
-from decimal import Decimal
-from datetime import datetime
+
+import pytest
 
 from app.domain.entities.product_entity import ProductEntity
 
@@ -69,9 +70,9 @@ def patched_async_session(mocker):
     mock = MagicMock()
     mock.__aenter__.return_value = AsyncMock()
     mock.__aexit__.return_value = None
-    
+
     mocker.patch(
         "app.infrastructure.persistence.repositories.product_repository_impl.async_session",
-        return_value=mock
+        return_value=mock,
     )
     return mock

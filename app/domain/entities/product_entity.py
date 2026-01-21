@@ -1,7 +1,6 @@
-from uuid import UUID, uuid4
 from datetime import datetime
 from decimal import Decimal
-from typing import Optional
+from uuid import UUID, uuid4
 
 
 class ProductEntity:
@@ -11,9 +10,9 @@ class ProductEntity:
         description: str,
         price: Decimal,
         quantity: int,
-        id: Optional[UUID] = None,
-        created_at: Optional[datetime] = None,
-        updated_at: Optional[datetime] = None,
+        id: UUID | None = None,
+        created_at: datetime | None = None,
+        updated_at: datetime | None = None,
     ):
         self.id = id or uuid4()
         self.name = name

@@ -1,8 +1,9 @@
-from pydantic import BaseModel, Field
-from typing import Annotated
-from decimal import Decimal
 from datetime import datetime
+from decimal import Decimal
+from typing import Annotated
 from uuid import UUID
+
+from pydantic import BaseModel, Field
 
 
 class CreateProductInput(BaseModel):
@@ -10,7 +11,7 @@ class CreateProductInput(BaseModel):
     description: str = Field(..., min_length=1, max_length=1000, description="Descrição do produto")
     price: Annotated[Decimal, Field(..., gt=0, description="Preço do produto")]
     quantity: int = Field(..., ge=0, description="Quantidade em estoque")
-    
+
     class Config:
         json_schema_extra = {
             "example": {
@@ -30,7 +31,7 @@ class ProductOutput(BaseModel):
     quantity: int
     created_at: datetime
     updated_at: datetime
-    
+
     class Config:
         from_attributes = True
         json_schema_extra = {
@@ -52,12 +53,15 @@ class ProductListOutput(BaseModel):
     limit: int
     products: list[ProductOutput]
 
+
 class UpdateProductInput(BaseModel):
     name: str | None = Field(None, min_length=1, max_length=255, description="Nome do produto")
-    description: str | None = Field(None, min_length=1, max_length=1000, description="Descrição do produto")
+    description: str | None = Field(
+        None, min_length=1, max_length=1000, description="Descrição do produto"
+    )
     price: Annotated[Decimal | None, Field(None, gt=0, description="Preço do produto")]
     quantity: int | None = Field(None, ge=0, description="Quantidade em estoque")
-    
+
     class Config:
         json_schema_extra = {
             "example": {

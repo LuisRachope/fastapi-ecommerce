@@ -10,7 +10,10 @@ LOGGING_CONFIG = {
             "datefmt": "%Y-%m-%d %H:%M:%S",
         },
         "detailed": {
-            "format": "%(asctime)s - %(name)s - %(levelname)s - %(filename)s:%(lineno)d - %(funcName)s() - %(message)s",
+            "format": (  # noqa: E501
+                "%(asctime)s - %(name)s - %(levelname)s - %(filename)s:"
+                "%(lineno)d - %(funcName)s() - %(message)s"
+            ),
             "datefmt": "%Y-%m-%d %H:%M:%S",
         },
     },

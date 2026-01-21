@@ -1,4 +1,5 @@
 from datetime import datetime
+
 from app.domain.entities.order_entity import OrderEntity
 from app.domain.entities.order_item_entity import OrderItemEntity
 from app.domain.entities.product_entity import ProductEntity
@@ -51,7 +52,7 @@ class OrderConverter:
             status=entity.status,
             total_amount=entity.total_amount,
         )
-    
+
 
 class OrderItemConverter:
     @staticmethod

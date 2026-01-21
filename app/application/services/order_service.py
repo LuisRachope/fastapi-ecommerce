@@ -1,6 +1,6 @@
-
 from fastapi import status
 from fastapi.exceptions import ValidationException
+
 from app.application.dtos.order_dto import OrderDTO, OrderResponseDTO
 from app.application.dtos.order_item_dto import OrderItemResponseDTO
 from app.core.exceptions import ApplicationException
@@ -13,7 +13,9 @@ from app.domain.repositories.order_repository import OrderRepository
 class OrderService:
     """Service class for managing orders."""
 
-    def __init__(self, order_repository: OrderRepository, order_item_repository: OrderItemRepository):
+    def __init__(
+        self, order_repository: OrderRepository, order_item_repository: OrderItemRepository
+    ):
         self.order_repository = order_repository
         self.order_item_repository = order_item_repository
 
@@ -35,16 +37,21 @@ class OrderService:
                     quantity=item.quantity,
                     price=item.price,
                 )
-                item_entity: OrderItemEntity = await self.order_item_repository.create(order_item_entity)
+                item_entity: OrderItemEntity = await self.order_item_repository.create(
+                    order_item_entity
+                )
                 items_entities.append(item_entity)
 
-            items_dtos = [OrderItemResponseDTO(
-                id=item_entity.id,
-                order_id=item_entity.order_id,
-                product_id=item_entity.product_id,
-                quantity=item_entity.quantity,
-                price=item_entity.price,
-            ) for item_entity in items_entities]
+            items_dtos = [
+                OrderItemResponseDTO(
+                    id=item_entity.id,
+                    order_id=item_entity.order_id,
+                    product_id=item_entity.product_id,
+                    quantity=item_entity.quantity,
+                    price=item_entity.price,
+                )
+                for item_entity in items_entities
+            ]
             return OrderResponseDTO(
                 id=response_order.id,
                 order_date=response_order.order_date,
@@ -57,4 +64,6 @@ class OrderService:
         except ApplicationException as e:
             raise ApplicationException(status_code=e.status_code, detail=e.message)
         except Exception as e:
-            raise ApplicationException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+            raise ApplicationException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+            )

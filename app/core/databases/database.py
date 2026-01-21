@@ -2,11 +2,11 @@
 Database configuration module.
 Handles SQLAlchemy async engine, session factory, and ORM models.
 """
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
+
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import declarative_base
 
 from app.core.config import settings
-
 
 _DATABASE_URL = settings.DATABASE_URL
 if _DATABASE_URL.startswith("sqlite:///") and not _DATABASE_URL.startswith("sqlite+aiosqlite://"):

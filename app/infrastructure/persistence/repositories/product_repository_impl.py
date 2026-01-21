@@ -1,17 +1,15 @@
 import logging
-from typing import List
 
 from fastapi import status
+from sqlalchemy import delete, select
+from sqlalchemy.exc import SQLAlchemyError
 
+from app.core.databases.database import async_session
 from app.core.exceptions import ApplicationException
 from app.domain.entities.product_entity import ProductEntity
 from app.domain.repositories.product_repository import ProductRepository
-
-from app.infrastructure.persistence.models import ProductORM
-from app.core.databases.database import async_session
 from app.infrastructure.converters import ProductConverter
-from sqlalchemy import select, delete
-from sqlalchemy.exc import SQLAlchemyError
+from app.infrastructure.persistence.models import ProductORM
 
 logger = logging.getLogger(__name__)
 
@@ -36,12 +34,18 @@ class SQLProductRepository(ProductRepository):
                 return result
         except SQLAlchemyError as e:
             logger.error(f"Erro BD ao criar produto: {str(e)}", exc_info=True)
-            raise ApplicationException(message="Erro BD ao criar produto", status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            raise ApplicationException(
+                message="Erro BD ao criar produto",
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
         except Exception as e:
             logger.error(f"Erro interno ao criar produto: {str(e)}", exc_info=True)
-            raise ApplicationException(message="Erro interno ao criar produto", status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            raise ApplicationException(
+                message="Erro interno ao criar produto",
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
-    async def get_all(self, skip: int = 0, limit: int = 10) -> List[ProductEntity]:
+    async def get_all(self, skip: int = 0, limit: int = 10) -> list[ProductEntity]:
         """Retrieve all products with pagination."""
         try:
             logger.debug(f"get_all - skip: {skip}, limit: {limit}")
@@ -53,10 +57,16 @@ class SQLProductRepository(ProductRepository):
                 return [self.converter.orm_to_entity(orm) for orm in rows]
         except SQLAlchemyError as e:
             logger.error(f"Erro BD ao recuperar produtos: {str(e)}", exc_info=True)
-            raise ApplicationException(message="Erro BD ao recuperar produtos", status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            raise ApplicationException(
+                message="Erro BD ao recuperar produtos",
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
         except Exception as e:
             logger.error(f"Erro interno ao recuperar produtos: {str(e)}", exc_info=True)
-            raise ApplicationException(message="Erro interno ao recuperar produtos", status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            raise ApplicationException(
+                message="Erro interno ao recuperar produtos",
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
     async def get_by_id(self, product_id: str) -> ProductEntity | None:
         """Get a product by ID."""
@@ -74,10 +84,16 @@ class SQLProductRepository(ProductRepository):
                     return None
         except SQLAlchemyError as e:
             logger.error(f"Erro BD ao buscar produto {product_id}: {str(e)}", exc_info=True)
-            raise ApplicationException(message=f"Erro ao buscar produto {product_id}", status_code=status.HTTP_400_BAD_REQUEST)
+            raise ApplicationException(
+                message=f"Erro ao buscar produto {product_id}",
+                status_code=status.HTTP_400_BAD_REQUEST,
+            )
         except Exception as e:
             logger.error(f"Erro interno ao buscar produto {product_id}: {str(e)}", exc_info=True)
-            raise ApplicationException(message=f"Erro interno ao buscar produto {product_id}", status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            raise ApplicationException(
+                message=f"Erro interno ao buscar produto {product_id}",
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
     async def update(self, product: ProductEntity) -> ProductEntity:
         """Update an existing product in the database."""
@@ -94,13 +110,19 @@ class SQLProductRepository(ProductRepository):
                 return result
         except SQLAlchemyError as e:
             logger.error(f"Erro BD ao atualizar produto {product.id}: {str(e)}", exc_info=True)
-            raise ApplicationException(message=f"Erro BD ao atualizar produto {product.id}", status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            raise ApplicationException(
+                message=f"Erro BD ao atualizar produto {product.id}",
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
         except ApplicationException:
             raise
         except Exception as e:
             logger.error(f"Erro interno ao atualizar produto {product.id}: {str(e)}", exc_info=True)
-            raise ApplicationException(message=f"Erro interno ao atualizar produto {product.id}", status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
+            raise ApplicationException(
+                message=f"Erro interno ao atualizar produto {product.id}",
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
     async def delete_by_id(self, product_id: str) -> None:
         """Delete a product by ID."""
         try:
@@ -115,7 +137,13 @@ class SQLProductRepository(ProductRepository):
                     logger.warning(f"Produto não encontrado para deleção: {product_id}")
         except SQLAlchemyError as e:
             logger.error(f"Erro BD ao deletar produto {product_id}: {str(e)}", exc_info=True)
-            raise ApplicationException(message=f"Erro BD ao deletar produto {product_id}", status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            raise ApplicationException(
+                message=f"Erro BD ao deletar produto {product_id}",
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
         except Exception as e:
             logger.error(f"Erro interno ao deletar produto {product_id}: {str(e)}", exc_info=True)
-            raise ApplicationException(message=f"Erro interno ao deletar produto {product_id}", status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            raise ApplicationException(
+                message=f"Erro interno ao deletar produto {product_id}",
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )

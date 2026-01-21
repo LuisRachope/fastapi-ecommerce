@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Optional
 
 from pydantic import BaseModel
 
@@ -10,7 +9,7 @@ class OrderDTO(BaseModel):
     order_date: datetime
     status: str
     total_amount: float
-    items: Optional[list[OrderItemDTO]] = None
+    items: list[OrderItemDTO] | None = None
 
     class Config:
         from_attributes = True
@@ -21,7 +20,7 @@ class OrderResponseDTO(BaseModel):
     order_date: datetime
     status: str
     total_amount: float
-    items: Optional[list[OrderItemResponseDTO]] = None
+    items: list[OrderItemResponseDTO] | None = None
 
     class Config:
         from_attributes = True

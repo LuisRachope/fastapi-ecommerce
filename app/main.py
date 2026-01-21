@@ -1,21 +1,20 @@
 from fastapi import FastAPI
 
 from app.core.config import settings
-
+from app.core.databases.database import init_db
+from app.presentation.api.v1.endpoints.order_controller import router as order_router
 from app.presentation.api.v1.endpoints.ping_controller import router as ping_router
 from app.presentation.api.v1.endpoints.product_controller import router as product_router
-from app.presentation.api.v1.endpoints.order_controller import router as order_router
-from app.core.databases.database import init_db
 
 
 def _get_app_args() -> dict:
-    return dict(
-        title=settings.API_TITLE,
-        version=settings.API_VERSION,
-        description=settings.API_DESCRIPTION,
-        docs_url=settings.DOCS_URL,
-        redoc_url=settings.REDOC_URL,
-    )
+    return {
+        "title": settings.API_TITLE,
+        "version": settings.API_VERSION,
+        "description": settings.API_DESCRIPTION,
+        "docs_url": settings.DOCS_URL,
+        "redoc_url": settings.REDOC_URL,
+    }
 
 
 def _init_fast_api_app() -> FastAPI:

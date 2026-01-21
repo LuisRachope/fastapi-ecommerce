@@ -1,23 +1,22 @@
-import pytest
-from unittest.mock import AsyncMock
-from decimal import Decimal
 from datetime import datetime
+from decimal import Decimal
+from unittest.mock import AsyncMock
 
-from app.application.services.product_service import ProductService
-from app.application.dtos.product_dto import ProductResponseDTO
-from app.core.exceptions import ApplicationException
+import pytest
 from fastapi import status
+
+from app.application.dtos.product_dto import ProductResponseDTO
+from app.application.services.product_service import ProductService
+from app.core.exceptions import ApplicationException
 
 
 class TestProductServiceGetAllProducts:
     @pytest.mark.asyncio
-    async def test_get_all_products_returns_response_dtos(
-        self, product_entity_list
-    ):
+    async def test_get_all_products_returns_response_dtos(self, product_entity_list):
         # Arrange
         mock_repository = AsyncMock()
         mock_repository.get_all.return_value = product_entity_list
-        
+
         service = ProductService(product_repository=mock_repository)
 
         # Act
@@ -32,14 +31,12 @@ class TestProductServiceGetAllProducts:
         mock_repository.get_all.assert_called_once_with(skip=0, limit=10)
 
     @pytest.mark.asyncio
-    async def test_get_all_products_with_custom_pagination(
-        self, product_entity_list
-    ):
+    async def test_get_all_products_with_custom_pagination(self, product_entity_list):
         # Arrange
         mock_repository = AsyncMock()
         filtered_products = [product_entity_list[0]]
         mock_repository.get_all.return_value = filtered_products
-        
+
         service = ProductService(product_repository=mock_repository)
 
         # Act
@@ -55,7 +52,7 @@ class TestProductServiceGetAllProducts:
         # Arrange
         mock_repository = AsyncMock()
         mock_repository.get_all.return_value = []
-        
+
         service = ProductService(product_repository=mock_repository)
 
         # Act
@@ -67,13 +64,11 @@ class TestProductServiceGetAllProducts:
         mock_repository.get_all.assert_called_once_with(skip=0, limit=10)
 
     @pytest.mark.asyncio
-    async def test_get_all_products_converts_entities_to_dtos(
-        self, product_entity
-    ):
+    async def test_get_all_products_converts_entities_to_dtos(self, product_entity):
         # Arrange
         mock_repository = AsyncMock()
         mock_repository.get_all.return_value = [product_entity]
-        
+
         service = ProductService(product_repository=mock_repository)
 
         # Act
@@ -95,27 +90,24 @@ class TestProductServiceGetAllProducts:
         # Arrange
         mock_repository = AsyncMock()
         mock_repository.get_all.side_effect = ApplicationException(
-            message="Database error",
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
+            message="Database error", status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
-        
+
         service = ProductService(product_repository=mock_repository)
 
         # Act & Assert
         with pytest.raises(ApplicationException) as exc_info:
             await service.get_all_products()
-        
+
         assert exc_info.value.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
         assert exc_info.value.message == "Database error"
 
     @pytest.mark.asyncio
-    async def test_get_all_products_uses_default_pagination_values(
-        self, product_entity_list
-    ):
+    async def test_get_all_products_uses_default_pagination_values(self, product_entity_list):
         # Arrange
         mock_repository = AsyncMock()
         mock_repository.get_all.return_value = product_entity_list
-        
+
         service = ProductService(product_repository=mock_repository)
 
         # Act
@@ -127,13 +119,11 @@ class TestProductServiceGetAllProducts:
         mock_repository.get_all.assert_called_once_with(skip=0, limit=10)
 
     @pytest.mark.asyncio
-    async def test_get_all_products_maintains_product_price_as_decimal(
-        self, product_entity_list
-    ):
+    async def test_get_all_products_maintains_product_price_as_decimal(self, product_entity_list):
         # Arrange
         mock_repository = AsyncMock()
         mock_repository.get_all.return_value = product_entity_list
-        
+
         service = ProductService(product_repository=mock_repository)
 
         # Act
@@ -145,13 +135,11 @@ class TestProductServiceGetAllProducts:
             assert dto.price > 0
 
     @pytest.mark.asyncio
-    async def test_get_all_products_maintains_datetime_fields(
-        self, product_entity
-    ):
+    async def test_get_all_products_maintains_datetime_fields(self, product_entity):
         # Arrange
         mock_repository = AsyncMock()
         mock_repository.get_all.return_value = [product_entity]
-        
+
         service = ProductService(product_repository=mock_repository)
 
         # Act
@@ -166,13 +154,11 @@ class TestProductServiceGetAllProducts:
         assert dto.updated_at == product_entity.updated_at
 
     @pytest.mark.asyncio
-    async def test_get_all_products_repository_called_once(
-        self, product_entity_list
-    ):
+    async def test_get_all_products_repository_called_once(self, product_entity_list):
         # Arrange
         mock_repository = AsyncMock()
         mock_repository.get_all.return_value = product_entity_list
-        
+
         service = ProductService(product_repository=mock_repository)
 
         # Act
@@ -182,17 +168,15 @@ class TestProductServiceGetAllProducts:
         mock_repository.get_all.assert_called_once_with(skip=10, limit=5)
 
     @pytest.mark.asyncio
-    async def test_get_all_products_multiple_calls_independent(
-        self, product_entity_list
-    ):
+    async def test_get_all_products_multiple_calls_independent(self, product_entity_list):
         # Arrange
         mock_repository = AsyncMock()
         mock_repository.get_all.side_effect = [
             product_entity_list,  # First call
             [product_entity_list[0]],  # Second call
-            []  # Third call
+            [],  # Third call
         ]
-        
+
         service = ProductService(product_repository=mock_repository)
 
         # Act

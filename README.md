@@ -43,7 +43,7 @@ REDOC_URL=/redoc
 
 ## ▶️ Executando a Aplicação
 
-### Com Make (recomendado)
+### Com MakeFile (recomendado)
 
 ```bash
 make execute
@@ -61,8 +61,7 @@ A API estará disponível em `http://localhost:8080`
 
 Após iniciar a aplicação, acesse:
 
-- **Swagger UI (Interactive)**: [http://localhost:8080/docs](http://localhost:8080/docs)
-- **ReDoc (Documentation)**: [http://localhost:8080/redoc](http://localhost:8080/redoc)
+- **Swagger UI (Interactive)**: [http://localhost:8080/ui](http://localhost:8080/ui)
 
 ## 📁 Estrutura do Projeto
 
@@ -104,5 +103,3 @@ pytest -m integration # Testes de integração
 | GET | `/ping` | Health check da API |
 | GET | `/v1/products` | Listar produtos |
 | POST | `/v1/products` | Criar produto |
-| GET | `/v1/orders` | Listar pedidos |
-| POST | `/v1/orders` | Criar pedido |

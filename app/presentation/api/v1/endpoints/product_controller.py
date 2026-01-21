@@ -6,10 +6,10 @@ from app.presentation.schemas.product_schema import (
     ProductOutput,
     UpdateProductInput
 )
-from app.presentation.api.v1.dependencies import get_product_service
+from app.core.dependencies import get_product_service
 from app.core.exceptions import ApplicationException
 
-router = APIRouter(prefix="/products", tags=["products"])
+router = APIRouter(prefix="/products", tags=["Products"])
 
 
 @router.post(
@@ -110,6 +110,29 @@ async def patch_product_by_id(
     """
     try:
         return await service.patch_product_by_id(product_id, body)
+    except ApplicationException as e:
+        raise HTTPException(status_code=e.status_code, detail=e.message)
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
+@router.delete(
+    "/{product_id}",
+    status_code=200,
+    summary="Deletar produto",
+    description="Deleta um produto existente pelo seu ID",
+)
+async def delete_product_by_id(
+    product_id: UUID,
+    service: ProductService = Depends(get_product_service),
+):
+    """
+    Deleta um produto existente pelo seu ID
+    
+    - **product_id**: ID do produto
+    """
+    try:
+        await service.delete_product_by_id(product_id)
+        return {"detail": "Produto deletado com sucesso"}
     except ApplicationException as e:
         raise HTTPException(status_code=e.status_code, detail=e.message)
     except Exception as e:

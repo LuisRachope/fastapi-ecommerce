@@ -1,6 +1,6 @@
 from typing import List
 from app.core.utils import update_columns_obj
-from app.domain.entities.product import ProductEntity
+from app.domain.entities.product_entity import ProductEntity
 from app.domain.repositories.product_repository import ProductRepository
 from app.application.dtos.product_dto import CreateProductDTO, ProductResponseDTO
 from app.core.exceptions import ApplicationException, ValidationException
@@ -107,3 +107,18 @@ class ProductService:
             raise ApplicationException(status_code=e.status_code, detail=e.message)
         except Exception as e:
             raise ValidationException(f"Erro ao atualizar produto com ID {product_id}: {str(e)}")
+        
+    async def delete_product_by_id(self, product_id: str) -> None:
+        """Deleta um produto por ID"""
+        try:
+            product = await self.product_repository.get_by_id(product_id)
+            if not product:
+                raise ValidationException(f"Produto com ID {product_id} não encontrado")
+            
+            await self.product_repository.delete_by_id(product_id)
+        except ValidationException:
+            raise
+        except ApplicationException as e:
+            raise ApplicationException(status_code=e.status_code, detail=e.message)
+        except Exception as e:
+            raise ValidationException(f"Erro ao deletar produto com ID {product_id}: {str(e)}")

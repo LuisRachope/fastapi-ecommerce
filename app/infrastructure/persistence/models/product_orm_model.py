@@ -1,8 +1,10 @@
 from datetime import datetime
 
 from sqlalchemy import Column, String, Integer, Numeric, DateTime
+from sqlalchemy.orm import relationship
 
-from app.infrastructure.persistence.database import Base
+
+from app.infrastructure.database import Base
 
 
 class ProductORM(Base):
@@ -15,3 +17,5 @@ class ProductORM(Base):
     quantity = Column(Integer, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow)
+
+    order_items = relationship("OrderItemORM", back_populates="product")

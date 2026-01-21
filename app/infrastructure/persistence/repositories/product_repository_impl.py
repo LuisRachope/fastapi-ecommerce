@@ -4,13 +4,13 @@ from typing import List
 from fastapi import status
 
 from app.core.exceptions import ApplicationException
-from app.domain.entities.product import ProductEntity
+from app.domain.entities.product_entity import ProductEntity
 from app.domain.repositories.product_repository import ProductRepository
 
 from app.infrastructure.persistence.models import ProductORM
-from app.infrastructure.persistence.database import async_session
+from app.infrastructure.database import async_session
 from app.infrastructure.converters import ProductConverter
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from sqlalchemy.exc import SQLAlchemyError
 
 logger = logging.getLogger(__name__)
@@ -100,3 +100,22 @@ class SQLProductRepository(ProductRepository):
         except Exception as e:
             logger.error(f"Erro interno ao atualizar produto {product.id}: {str(e)}", exc_info=True)
             raise ApplicationException(message=f"Erro interno ao atualizar produto {product.id}", status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    async def delete_by_id(self, product_id: str) -> None:
+        """Delete a product by ID."""
+        try:
+            logger.info(f"Deletando produto: {product_id}")
+            async with async_session() as session:
+                stmt = delete(ProductORM).where(ProductORM.id == str(product_id))
+                result = await session.execute(stmt)
+                await session.commit()
+                if result.rowcount > 0:
+                    logger.info(f"Produto deletado: {product_id}")
+                else:
+                    logger.warning(f"Produto não encontrado para deleção: {product_id}")
+        except SQLAlchemyError as e:
+            logger.error(f"Erro BD ao deletar produto {product_id}: {str(e)}", exc_info=True)
+            raise ApplicationException(message=f"Erro BD ao deletar produto {product_id}", status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as e:
+            logger.error(f"Erro interno ao deletar produto {product_id}: {str(e)}", exc_info=True)
+            raise ApplicationException(message=f"Erro interno ao deletar produto {product_id}", status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)

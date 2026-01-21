@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List
-from app.domain.entities.product import ProductEntity
+from app.domain.entities.product_entity import ProductEntity
 
 
 class ProductRepository(ABC):    
@@ -18,4 +18,8 @@ class ProductRepository(ABC):
 
     @abstractmethod
     async def update(self, product: ProductEntity) -> ProductEntity:
+        pass
+
+    @abstractmethod
+    async def delete_by_id(self, product_id: str) -> None:
         pass

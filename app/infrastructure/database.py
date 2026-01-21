@@ -24,18 +24,6 @@ async_session = async_sessionmaker(engine, expire_on_commit=False, class_=AsyncS
 Base = declarative_base()
 
 
-class ProductORM(Base):
-    __tablename__ = "products"
-
-    id = Column(String, primary_key=True, index=True)
-    name = Column(String, nullable=False)
-    description = Column(String, nullable=True)
-    price = Column(Numeric(12, 2), nullable=False)
-    quantity = Column(Integer, nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow)
-
-
 async def init_db():
     """Initialize database tables."""
     async with engine.begin() as conn:

@@ -4,7 +4,7 @@ from uuid import uuid4
 from decimal import Decimal
 from datetime import datetime
 
-from app.domain.entities.product import ProductEntity
+from app.domain.entities.product_entity import ProductEntity
 
 
 @pytest.fixture

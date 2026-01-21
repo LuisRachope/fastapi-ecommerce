@@ -55,7 +55,7 @@ make execute
 uvicorn app.main:app --host 0.0.0.0 --port 8080 --reload
 ```
 
-A API estará disponível em `http://localhost:8080`
+A API estará disponível em [http://localhost:8080](http://localhost:8080/ui)
 
 ### Acessar a Documentação
 

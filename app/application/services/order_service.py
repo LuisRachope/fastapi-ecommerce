@@ -99,3 +99,18 @@ class OrderService:
             raise ApplicationException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
             )
+
+    async def delete_order_by_id(self, order_id: str) -> bool:
+        """Delete an order by its ID."""
+        try:
+            order = await self.order_repository.get_by_id(order_id)
+            if order is None:
+                return True
+            await self.order_repository.delete_by_id(order_id)
+            return True
+        except ApplicationException as e:
+            raise ApplicationException(status_code=e.status_code, detail=e.message)
+        except Exception as e:
+            raise ApplicationException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+            )

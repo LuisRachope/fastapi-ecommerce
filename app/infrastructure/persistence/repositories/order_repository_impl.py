@@ -1,7 +1,7 @@
 import logging
 
 from fastapi import status
-from sqlalchemy import select
+from sqlalchemy import delete, select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import selectinload
 
@@ -45,6 +45,35 @@ class SQLOrderRepository(OrderRepository):
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
+    async def get_by_id(self, order_id: str) -> OrderEntity | None:
+        """Retrieve an order by its ID."""
+        try:
+            logger.info(f"Recuperando pedido com ID: {order_id}")
+            async with async_session() as session:
+                stmt = select(OrderORM).where(OrderORM.id == order_id)
+                result = await session.execute(stmt)
+                orm_order = result.scalar_one_or_none()
+
+                if orm_order is None:
+                    logger.info(f"Pedido com ID {order_id} não encontrado")
+                    return None
+
+                entity = self.converter.orm_to_entity(orm_order)
+                logger.info(f"Pedido com ID {order_id} recuperado com sucesso")
+                return entity
+        except SQLAlchemyError as e:
+            logger.error(f"Erro BD ao recuperar pedido: {str(e)}", exc_info=True)
+            raise ApplicationException(
+                message="Erro BD ao recuperar pedido",
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+        except Exception as e:
+            logger.error(f"Erro interno ao recuperar pedido: {str(e)}", exc_info=True)
+            raise ApplicationException(
+                message="Erro interno ao recuperar pedido",
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
     async def get_all(self) -> list[OrderCompleteEntity]:
         """Retrieve all orders from the database."""
         try:
@@ -70,5 +99,30 @@ class SQLOrderRepository(OrderRepository):
             logger.error(f"Erro interno ao recuperar pedidos: {str(e)}", exc_info=True)
             raise ApplicationException(
                 message="Erro interno ao recuperar pedidos",
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+    async def delete_by_id(self, order_id: str) -> bool:
+        """Delete an order by its ID."""
+        try:
+            logger.info(f"Deletando pedido com ID: {order_id}")
+            async with async_session() as session:
+                stmt = delete(OrderORM).where(OrderORM.id == order_id)
+                await session.execute(stmt)
+                await session.commit()
+                logger.info(f"Pedido com ID {order_id} deletado com sucesso")
+                return True
+        except SQLAlchemyError as e:
+            logger.error(f"Erro BD ao deletar pedido: {str(e)}", exc_info=True)
+            raise ApplicationException(
+                message="Erro BD ao deletar pedido",
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+        except ApplicationException:
+            raise
+        except Exception as e:
+            logger.error(f"Erro interno ao deletar pedido: {str(e)}", exc_info=True)
+            raise ApplicationException(
+                message="Erro interno ao deletar pedido",
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )

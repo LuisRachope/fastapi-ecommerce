@@ -48,3 +48,25 @@ async def get_all_orders(
         raise HTTPException(status_code=e.status_code, detail=e.message)
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
+
+@router.delete(
+    "/{order_id}",
+    status_code=200,
+    summary="Deletar pedido",
+    description="Deleta um pedido pelo ID",
+    response_model=bool,
+)
+async def delete_order_by_id(
+    order_id: str,
+    service: OrderService = Depends(get_order_service),
+):
+    """
+    Deleta um pedido pelo ID
+    """
+    try:
+        return await service.delete_order_by_id(order_id)
+    except ApplicationException as e:
+        raise HTTPException(status_code=e.status_code, detail=e.message)
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))

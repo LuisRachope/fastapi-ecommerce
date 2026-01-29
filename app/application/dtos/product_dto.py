@@ -1,6 +1,5 @@
 from datetime import datetime
 from decimal import Decimal
-from uuid import UUID
 
 
 class CreateProductDTO:
@@ -20,7 +19,7 @@ class CreateProductDTO:
 class ProductResponseDTO:
     def __init__(
         self,
-        id: UUID,
+        id: int,
         name: str,
         description: str,
         price: Decimal,
@@ -38,7 +37,7 @@ class ProductResponseDTO:
 
     def to_dict(self):
         return {
-            "id": str(self.id),
+            "id": self.id,
             "name": self.name,
             "description": self.description,
             "price": float(self.price),

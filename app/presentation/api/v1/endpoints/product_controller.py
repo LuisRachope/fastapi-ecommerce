@@ -1,5 +1,3 @@
-from uuid import UUID
-
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from app.application.services.product_service import ProductService
@@ -81,7 +79,7 @@ async def get_all_products(
     description="Recupera um produto específico pelo seu ID",
 )
 async def get_product_by_id(
-    product_id: UUID,
+    product_id: int,
     service: ProductService = Depends(get_product_service),
 ):
     """
@@ -104,7 +102,7 @@ async def get_product_by_id(
     description="Atualiza os detalhes de um produto existente",
 )
 async def patch_product_by_id(
-    product_id: UUID,
+    product_id: int,
     body: UpdateProductInput,
     service: ProductService = Depends(get_product_service),
 ):
@@ -126,7 +124,7 @@ async def patch_product_by_id(
     description="Deleta um produto existente pelo seu ID",
 )
 async def delete_product_by_id(
-    product_id: UUID,
+    product_id: int,
     service: ProductService = Depends(get_product_service),
 ):
     """

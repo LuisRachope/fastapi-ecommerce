@@ -9,7 +9,7 @@ from app.core.databases.database import Base
 class ProductORM(Base):
     __tablename__ = "products"
 
-    id = Column(String, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
     description = Column(String, nullable=True)
     price = Column(Numeric(12, 2), nullable=False)

@@ -1,7 +1,6 @@
 from datetime import datetime
 from decimal import Decimal
 from unittest.mock import AsyncMock, MagicMock
-from uuid import uuid4
 
 import pytest
 
@@ -12,7 +11,7 @@ from app.domain.entities.product_entity import ProductEntity
 def product_entity() -> ProductEntity:
     """Fixture for a sample ProductEntity."""
     return ProductEntity(
-        id=str(uuid4()),
+        id=1,
         name="Test Product",
         description="Test Description",
         price=Decimal("99.99"),
@@ -27,7 +26,7 @@ def product_entity_list() -> list[ProductEntity]:
     """Fixture for a list of ProductEntity objects."""
     return [
         ProductEntity(
-            id=str(uuid4()),
+            id=i,
             name=f"Product {i}",
             description=f"Description {i}",
             price=Decimal(f"{10 + i}.99"),

@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from app.domain.entities.order_entity import OrderEntity
+from app.domain.entities.order_entity import OrderCompleteEntity, OrderEntity
 
 
 class OrderRepository(ABC):
@@ -9,7 +9,7 @@ class OrderRepository(ABC):
         pass
 
     @abstractmethod
-    async def get_all(self) -> list[OrderEntity]:
+    async def get_all(self) -> list[OrderCompleteEntity]:
         pass
 
     @abstractmethod

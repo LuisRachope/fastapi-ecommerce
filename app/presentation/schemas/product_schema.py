@@ -1,7 +1,6 @@
 from datetime import datetime
 from decimal import Decimal
 from typing import Annotated
-from uuid import UUID
 
 from pydantic import BaseModel, Field
 
@@ -24,7 +23,7 @@ class CreateProductInput(BaseModel):
 
 
 class ProductOutput(BaseModel):
-    id: UUID
+    id: int
     name: str
     description: str
     price: Decimal
@@ -36,7 +35,7 @@ class ProductOutput(BaseModel):
         from_attributes = True
         json_schema_extra = {
             "example": {
-                "id": "550e8400-e29b-41d4-a716-446655440000",
+                "id": 1,
                 "name": "Notebook",
                 "description": "Notebook de alta performance",
                 "price": 3999.99,

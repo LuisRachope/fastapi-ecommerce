@@ -13,7 +13,7 @@ class ProductRepository(ABC):
         pass
 
     @abstractmethod
-    async def get_by_id(self, product_id: str) -> ProductEntity | None:
+    async def get_by_id(self, product_id: int) -> ProductEntity | None:
         pass
 
     @abstractmethod
@@ -21,5 +21,5 @@ class ProductRepository(ABC):
         pass
 
     @abstractmethod
-    async def delete_by_id(self, product_id: str) -> None:
+    async def delete_by_id(self, product_id: int) -> None:
         pass

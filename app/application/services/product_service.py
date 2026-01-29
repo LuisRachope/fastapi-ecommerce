@@ -69,7 +69,7 @@ class ProductService:
         products = await self.product_repository.get_all(skip=skip, limit=limit)
         return [self._to_response_dto(p) for p in products]
 
-    async def get_product_by_id(self, product_id: str) -> ProductResponseDTO:
+    async def get_product_by_id(self, product_id: int) -> ProductResponseDTO:
         """Recupera um produto por ID"""
         try:
             product = await self.product_repository.get_by_id(product_id)
@@ -84,7 +84,7 @@ class ProductService:
             raise ValidationException(f"Erro ao recuperar produto com ID {product_id}: {str(e)}")
 
     async def patch_product_by_id(
-        self, product_id: str, body: CreateProductInput
+        self, product_id: int, body: CreateProductInput
     ) -> ProductResponseDTO:
         """Atualiza parcialmente um produto por ID"""
         try:
@@ -109,7 +109,7 @@ class ProductService:
         except Exception as e:
             raise ValidationException(f"Erro ao atualizar produto com ID {product_id}: {str(e)}")
 
-    async def delete_product_by_id(self, product_id: str) -> None:
+    async def delete_product_by_id(self, product_id: int) -> None:
         """Deleta um produto por ID"""
         try:
             product = await self.product_repository.get_by_id(product_id)

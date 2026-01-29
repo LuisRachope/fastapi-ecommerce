@@ -94,10 +94,10 @@ class OrderService:
                 orders_dtos.append(order_dto)
             return orders_dtos
         except ApplicationException as e:
-            raise ApplicationException(status_code=e.status_code, detail=e.message)
+            raise ApplicationException(message=e.message, status_code=e.status_code)
         except Exception as e:
             raise ApplicationException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+                message=str(e), status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
     async def delete_order_by_id(self, order_id: str) -> bool:

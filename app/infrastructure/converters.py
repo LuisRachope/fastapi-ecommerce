@@ -24,7 +24,7 @@ class ProductConverter:
     @staticmethod
     def entity_to_orm(entity: ProductEntity) -> ProductORM:
         return ProductORM(
-            id=str(entity.id),
+            id=entity.id,
             name=entity.name,
             description=entity.description,
             price=entity.price,

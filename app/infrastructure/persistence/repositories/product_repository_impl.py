@@ -68,12 +68,12 @@ class SQLProductRepository(ProductRepository):
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
-    async def get_by_id(self, product_id: str) -> ProductEntity | None:
+    async def get_by_id(self, product_id: int) -> ProductEntity | None:
         """Get a product by ID."""
         try:
             logger.debug(f"Buscando produto: {product_id}")
             async with async_session() as session:
-                query = select(ProductORM).where(ProductORM.id == str(product_id))
+                query = select(ProductORM).where(ProductORM.id == product_id)
                 result = await session.execute(query)
                 orm_obj = result.scalar_one_or_none()
                 if orm_obj:
@@ -123,12 +123,12 @@ class SQLProductRepository(ProductRepository):
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
-    async def delete_by_id(self, product_id: str) -> None:
+    async def delete_by_id(self, product_id: int) -> None:
         """Delete a product by ID."""
         try:
             logger.info(f"Deletando produto: {product_id}")
             async with async_session() as session:
-                stmt = delete(ProductORM).where(ProductORM.id == str(product_id))
+                stmt = delete(ProductORM).where(ProductORM.id == product_id)
                 result = await session.execute(stmt)
                 await session.commit()
                 if result.rowcount > 0:

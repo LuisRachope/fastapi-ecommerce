@@ -147,3 +147,26 @@ class SQLProductRepository(ProductRepository):
                 message=f"Erro interno ao deletar produto {product_id}",
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+    async def get_bulk_by_ids(self, product_ids: list[int]) -> list[ProductEntity]:
+        """Retrieve multiple products by a list of IDs."""
+        try:
+            logger.debug(f"get_bulk_by_ids - IDs: {product_ids}")
+            async with async_session() as session:
+                stmt = select(ProductORM).where(ProductORM.id.in_(product_ids))
+                result = await session.execute(stmt)
+                rows = result.scalars().all()
+                logger.info(f"Produtos recuperados em lote: {len(rows)}")
+                return [self.converter.orm_to_entity(orm) for orm in rows]
+        except SQLAlchemyError as e:
+            logger.error(f"Erro BD ao recuperar produtos em lote: {str(e)}", exc_info=True)
+            raise ApplicationException(
+                message="Erro BD ao recuperar produtos em lote",
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+        except Exception as e:
+            logger.error(f"Erro interno ao recuperar produtos em lote: {str(e)}", exc_info=True)
+            raise ApplicationException(
+                message="Erro interno ao recuperar produtos em lote",
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )

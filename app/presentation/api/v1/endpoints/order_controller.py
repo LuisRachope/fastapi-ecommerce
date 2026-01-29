@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from app.application.dtos.order_dto import OrderDTO, OrderResponseDTO
+from app.application.dtos.order_dto import OrderInputDTO, OrderResponseDTO
 from app.application.services.order_service import OrderService
 from app.core.dependencies import get_order_service
 from app.core.exceptions import ApplicationException
@@ -16,7 +16,7 @@ router = APIRouter(prefix="/orders", tags=["Orders"])
     response_model=OrderResponseDTO,
 )
 async def create_order(
-    body: OrderDTO,
+    body: OrderInputDTO,
     service: OrderService = Depends(get_order_service),
 ):
     """

@@ -5,14 +5,16 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 from fastapi import status
 
-from app.application.dtos.order_dto import OrderDTO, OrderResponseDTO
-from app.application.dtos.order_item_dto import OrderItemDTO
+from app.application.dtos.order_dto import OrderInputDTO, OrderResponseDTO
+from app.application.dtos.order_item_dto import OrderItemInputDTO
 from app.application.services.order_service import OrderService
 from app.domain.entities.order_entity import OrderCompleteEntity, OrderEntity
 from app.domain.entities.order_item_entity import OrderItemEntity
+from app.domain.entities.product_entity import ProductEntity
 from app.domain.enums.order_status import OrderStatus
 from app.domain.repositories.order_item_repository import OrderItemRepository
 from app.domain.repositories.order_repository import OrderRepository
+from app.domain.repositories.product_repository import ProductRepository
 
 
 @pytest.fixture
@@ -64,10 +66,18 @@ def mock_order_item_repository():
 
 
 @pytest.fixture
-def order_service(mock_order_repository, mock_order_item_repository):
+def mock_product_repository():
+    """Fixture para ProductRepository mockado."""
+    return MagicMock(spec=ProductRepository)
+
+
+@pytest.fixture
+def order_service(mock_order_repository, mock_order_item_repository, mock_product_repository):
     """Fixture para OrderService com repositório mockado."""
     return OrderService(
-        order_repository=mock_order_repository, order_item_repository=mock_order_item_repository
+        order_repository=mock_order_repository,
+        order_item_repository=mock_order_item_repository,
+        product_repository=mock_product_repository,
     )
 
 
@@ -108,32 +118,54 @@ class TestOrderService:
         order_service: OrderService,
         mock_order_repository: OrderRepository,
         mock_order_item_repository: OrderItemRepository,
-        order_entity: OrderCompleteEntity,
+        mock_product_repository,
     ):
         """Testa que create_order cria um pedido com sucesso."""
-        order_data = OrderDTO(
-            order_date=datetime.now(),
-            status=OrderStatus.PENDING.value,
-            total_amount=Decimal("100.00"),
+        order_data = OrderInputDTO(
             items=[
-                OrderItemDTO(
+                OrderItemInputDTO(
                     product_id=1,
                     quantity=2,
-                    price=Decimal("50.00"),
                 )
             ],
         )
 
+        product = ProductEntity(
+            id=1,
+            name="Product 1",
+            description="Description",
+            price=Decimal("50.00"),
+            quantity=10,
+        )
+
+        order_entity = OrderEntity(
+            id=1,
+            order_date=datetime.now(),
+            status=OrderStatus.PENDING.value,
+            total_amount=Decimal("100.00"),
+        )
+
+        item_entities = [
+            OrderItemEntity(
+                id=1,
+                order_id=1,
+                product_id=1,
+                quantity=2,
+                price=Decimal("50.00"),
+            )
+        ]
+
+        mock_product_repository.get_bulk_by_ids = AsyncMock(return_value=[product])
         mock_order_repository.create = AsyncMock(return_value=order_entity)
-        mock_order_item_repository.create = AsyncMock(return_value=order_entity.items[0])
+        mock_order_item_repository.create_bulk = AsyncMock(return_value=item_entities)
 
         response = await order_service.create_order(order_data)
 
         assert response.id == order_entity.id
-        assert response.total_amount == order_entity.total_amount
-        assert len(response.items) == len(order_entity.items)
+        assert len(response.items) == 1
         mock_order_repository.create.assert_called_once()
-        mock_order_item_repository.create.assert_called()
+        mock_order_item_repository.create_bulk.assert_called_once()
+        mock_product_repository.get_bulk_by_ids.assert_called_once_with([1])
 
     @pytest.mark.asyncio
     async def test_create_order_with_empty_items_returns_422(
@@ -145,10 +177,7 @@ class TestOrderService:
         from pydantic import ValidationError
 
         with pytest.raises(ValidationError) as exc_info:
-            order_data = OrderDTO(
-                order_date=datetime.now(),
-                status="Pending",
-                total_amount=Decimal("100.00"),
+            order_data = OrderInputDTO(
                 items=[],
             )
 
@@ -164,15 +193,11 @@ class TestOrderService:
         """Testa que create_order propaga ApplicationException corretamente."""
         from app.core.exceptions import ApplicationException
 
-        order_data = OrderDTO(
-            order_date=datetime.now(),
-            status=OrderStatus.PENDING.value,
-            total_amount=Decimal("100.00"),
+        order_data = OrderInputDTO(
             items=[
-                OrderItemDTO(
+                OrderItemInputDTO(
                     product_id=1,
                     quantity=2,
-                    price=Decimal("50.00"),
                 )
             ],
         )
@@ -198,15 +223,11 @@ class TestOrderService:
         """Testa que create_order trata exceções genéricas corretamente."""
         from app.core.exceptions import ApplicationException
 
-        order_data = OrderDTO(
-            order_date=datetime.now(),
-            status=OrderStatus.PENDING.value,
-            total_amount=Decimal("100.00"),
+        order_data = OrderInputDTO(
             items=[
-                OrderItemDTO(
+                OrderItemInputDTO(
                     product_id=1,
                     quantity=2,
-                    price=Decimal("50.00"),
                 )
             ],
         )
@@ -338,39 +359,45 @@ class TestOrderService:
         order_service: OrderService,
         mock_order_repository: OrderRepository,
         mock_order_item_repository: OrderItemRepository,
+        mock_product_repository,
     ):
         """Testa que create_order cria um pedido com múltiplos itens com sucesso."""
-        order_data = OrderDTO(
-            order_date=datetime.now(),
-            status=OrderStatus.PENDING.value,
-            total_amount=Decimal("350.00"),
+        order_data = OrderInputDTO(
             items=[
-                OrderItemDTO(product_id=1, quantity=2, price=Decimal("50.00")),
-                OrderItemDTO(product_id=2, quantity=1, price=Decimal("100.00")),
-                OrderItemDTO(product_id=3, quantity=5, price=Decimal("30.00")),
+                OrderItemInputDTO(product_id=1, quantity=2),
+                OrderItemInputDTO(product_id=2, quantity=1),
+                OrderItemInputDTO(product_id=3, quantity=5),
             ],
         )
 
+        products = [
+            ProductEntity(
+                id=1, name="Product 1", description="Desc 1", price=Decimal("50.00"), quantity=10
+            ),
+            ProductEntity(
+                id=2, name="Product 2", description="Desc 2", price=Decimal("100.00"), quantity=10
+            ),
+            ProductEntity(
+                id=3, name="Product 3", description="Desc 3", price=Decimal("30.00"), quantity=10
+            ),
+        ]
+
         order_entity = OrderEntity(
             id=1,
-            order_date=order_data.order_date,
-            status=order_data.status,
-            total_amount=order_data.total_amount,
+            order_date=datetime.now(),
+            status=OrderStatus.PENDING.value,
+            total_amount=Decimal("350.00"),
         )
 
         item_entities = [
-            OrderItemEntity(
-                id=i + 1,
-                order_id=1,
-                product_id=item.product_id,
-                quantity=item.quantity,
-                price=item.price,
-            )
-            for i, item in enumerate(order_data.items)
+            OrderItemEntity(id=1, order_id=1, product_id=1, quantity=2, price=Decimal("50.00")),
+            OrderItemEntity(id=2, order_id=1, product_id=2, quantity=1, price=Decimal("100.00")),
+            OrderItemEntity(id=3, order_id=1, product_id=3, quantity=5, price=Decimal("30.00")),
         ]
 
+        mock_product_repository.get_bulk_by_ids = AsyncMock(return_value=products)
         mock_order_repository.create = AsyncMock(return_value=order_entity)
-        mock_order_item_repository.create = AsyncMock(side_effect=item_entities)
+        mock_order_item_repository.create_bulk = AsyncMock(return_value=item_entities)
 
         response = await order_service.create_order(order_data)
 
@@ -380,4 +407,4 @@ class TestOrderService:
         assert response.items[1].product_id == 2
         assert response.items[2].product_id == 3
         mock_order_repository.create.assert_called_once()
-        assert mock_order_item_repository.create.call_count == 3
+        mock_order_item_repository.create_bulk.assert_called_once()

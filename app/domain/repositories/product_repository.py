@@ -23,3 +23,7 @@ class ProductRepository(ABC):
     @abstractmethod
     async def delete_by_id(self, product_id: int) -> None:
         pass
+
+    @abstractmethod
+    async def get_bulk_by_ids(self, product_ids: list[int]) -> list[ProductEntity]:
+        pass

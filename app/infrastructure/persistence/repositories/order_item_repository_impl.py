@@ -41,3 +41,29 @@ class SQLOrderItemRepository(OrderItemRepository):
                 message="Erro interno ao criar item de pedido",
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+    async def create_bulk(self, order_items: list[OrderItemEntity]) -> list[OrderItemEntity]:
+        """Create multiple order items in the database."""
+        try:
+            logger.info("Criando itens de pedido em lote")
+            async with async_session() as session:
+                orm_objs = [self.converter.entity_to_orm(item) for item in order_items]
+                session.add_all(orm_objs)
+                await session.commit()
+                for orm_obj in orm_objs:
+                    await session.refresh(orm_obj)
+                results = [self.converter.orm_to_entity(orm_obj) for orm_obj in orm_objs]
+                logger.info(f"Itens de pedido criados em lote. Quantidade: {len(results)}")
+                return results
+        except SQLAlchemyError as e:
+            logger.error(f"Erro BD ao criar itens de pedido em lote: {str(e)}", exc_info=True)
+            raise ApplicationException(
+                message="Erro BD ao criar itens de pedido em lote",
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+        except Exception as e:
+            logger.error(f"Erro interno ao criar itens de pedido em lote: {str(e)}", exc_info=True)
+            raise ApplicationException(
+                message="Erro interno ao criar itens de pedido em lote",
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )

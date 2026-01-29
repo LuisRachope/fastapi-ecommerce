@@ -30,6 +30,7 @@ class DependencyContainer:
         self._services["order_service"] = OrderService(
             order_repository=self._repositories["order_repository"],
             order_item_repository=self._repositories["order_item_repository"],
+            product_repository=self._repositories["product_repository"],
         )
 
         self._services["order_item_service"] = OrderItemService(
@@ -40,10 +41,10 @@ class DependencyContainer:
     def get_product_service(self) -> ProductService:
         return self._services["product_service"]
 
-    def get_order_service(self):
+    def get_order_service(self) -> OrderService:
         return self._services["order_service"]
 
-    def get_order_item_service(self):
+    def get_order_item_service(self) -> OrderItemService:
         return self._services["order_item_service"]
 
 

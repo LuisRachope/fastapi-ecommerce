@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
+from app.application.dtos.product_dto import CreateProductDTO
 from app.application.services.product_service import ProductService
 from app.core.dependencies import get_product_service
 from app.core.exceptions import ApplicationException
@@ -32,8 +33,6 @@ async def create_product(
     - **quantity**: Quantidade em estoque
     """
     try:
-        from app.application.dtos.product_dto import CreateProductDTO
-
         dto = CreateProductDTO(
             name=request.name,
             description=request.description,

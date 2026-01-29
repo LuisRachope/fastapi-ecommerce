@@ -62,10 +62,10 @@ class OrderService:
         except ValidationException:
             raise
         except ApplicationException as e:
-            raise ApplicationException(status_code=e.status_code, detail=e.message)
+            raise ApplicationException(status_code=e.status_code, message=e.message)
         except Exception as e:
             raise ApplicationException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, message=str(e)
             )
 
     async def get_all_orders(self) -> list[OrderResponseDTO]:
@@ -109,8 +109,8 @@ class OrderService:
             await self.order_repository.delete_by_id(order_id)
             return True
         except ApplicationException as e:
-            raise ApplicationException(status_code=e.status_code, detail=e.message)
+            raise ApplicationException(status_code=e.status_code, message=e.message)
         except Exception as e:
             raise ApplicationException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, message=str(e)
             )

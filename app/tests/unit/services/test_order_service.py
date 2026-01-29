@@ -9,6 +9,7 @@ from app.application.dtos.order_item_dto import OrderItemDTO
 from app.application.services.order_service import OrderService
 from app.domain.entities.order_entity import OrderCompleteEntity
 from app.domain.entities.order_item_entity import OrderItemEntity
+from app.domain.enums.order_status import OrderStatus
 from app.domain.repositories.order_item_repository import OrderItemRepository
 from app.domain.repositories.order_repository import OrderRepository
 
@@ -28,7 +29,7 @@ def order_entity() -> OrderCompleteEntity:
     return OrderCompleteEntity(
         id=1,
         order_date=datetime.now(),
-        status="Pending",
+        status=OrderStatus.PENDING.value,
         total_amount=250.00,
         items=items,
     )
@@ -41,7 +42,7 @@ def order_entity_list() -> list[OrderCompleteEntity]:
         OrderCompleteEntity(
             id=i + 1,
             order_date=datetime.now(),
-            status="Pending",
+            status=OrderStatus.PENDING.value,
             total_amount=Decimal("100.00"),
             items=[],
         )
@@ -117,7 +118,7 @@ class TestOrderService:
         """Testa que create_order cria um pedido com sucesso."""
         order_data = OrderDTO(
             order_date=datetime.now(),
-            status="Pending",
+            status=OrderStatus.PENDING.value,
             total_amount=Decimal("100.00"),
             items=[
                 OrderItemDTO(
@@ -140,3 +141,24 @@ class TestOrderService:
         assert len(response.items) == len(order_entity.items)
         mock_order_repository.create.assert_called_once()
         mock_order_item_repository.create.assert_called()
+
+    @pytest.mark.asyncio
+    async def test_create_order_with_empty_items_returns_422(
+        self,
+        order_service: OrderService,
+        mock_order_repository: OrderRepository,
+    ):
+        """Testa que create_order retorna erro 422 quando a lista de itens está vazia."""
+        from pydantic import ValidationError
+
+        # Act & Assert
+        with pytest.raises(ValidationError) as exc_info:
+            order_data = OrderDTO(
+                order_date=datetime.now(),
+                status="Pending",
+                total_amount=Decimal("100.00"),
+                items=[],
+            )
+
+        assert "A lista de itens não pode estar vazia" in str(exc_info.value)
+        mock_order_repository.create.assert_not_called()

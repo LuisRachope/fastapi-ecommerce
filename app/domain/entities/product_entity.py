@@ -13,7 +13,7 @@ class ProductEntity:
         created_at: datetime | None = None,
         updated_at: datetime | None = None,
     ):
-        self.id = id or 0
+        self.id = id
         self.name = name
         self.description = description
         self.price = price

@@ -2,6 +2,7 @@ from fastapi import FastAPI
 
 from app.core.config import settings
 from app.core.databases.database import init_db
+from app.presentation.api.v1.endpoints.auth_controller import router as auth_router
 from app.presentation.api.v1.endpoints.order_controller import router as order_router
 from app.presentation.api.v1.endpoints.ping_controller import router as ping_router
 from app.presentation.api.v1.endpoints.product_controller import router as product_router
@@ -35,6 +36,7 @@ def init_app() -> FastAPI:
 def _config_app_routers(app: FastAPI):
     routers = [
         ping_router,
+        auth_router,
         product_router,
         order_router,
     ]

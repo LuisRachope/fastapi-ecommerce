@@ -3,9 +3,11 @@ from datetime import datetime
 from app.domain.entities.order_entity import OrderCompleteEntity, OrderEntity
 from app.domain.entities.order_item_entity import OrderItemEntity
 from app.domain.entities.product_entity import ProductEntity
-from app.infrastructure.persistence.models import ProductORM
+from app.domain.entities.user_entity import UserEntity
 from app.infrastructure.persistence.models.order_item_orm_model import OrderItemORM
 from app.infrastructure.persistence.models.order_orm_model import OrderORM
+from app.infrastructure.persistence.models.product_orm_model import ProductORM
+from app.infrastructure.persistence.models.user_orm_model import UserORM
 
 
 class ProductConverter:
@@ -84,4 +86,32 @@ class OrderItemConverter:
             order_id=entity.order_id,
             quantity=entity.quantity,
             price=entity.price,
+        )
+
+
+class UserConverter:
+    @staticmethod
+    def orm_to_entity(orm) -> UserEntity:
+        return UserEntity(
+            id=orm.id,
+            email=orm.email,
+            hashed_password=orm.hashed_password,
+            full_name=orm.full_name,
+            is_active=orm.is_active,
+            is_superuser=orm.is_superuser,
+            created_at=orm.created_at,
+            updated_at=orm.updated_at,
+        )
+
+    @staticmethod
+    def entity_to_orm(entity: UserEntity):
+        return UserORM(
+            id=entity.id,
+            email=entity.email,
+            hashed_password=entity.hashed_password,
+            full_name=entity.full_name,
+            is_active=entity.is_active,
+            is_superuser=entity.is_superuser,
+            created_at=entity.created_at,
+            updated_at=entity.updated_at,
         )

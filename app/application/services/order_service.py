@@ -6,6 +6,7 @@ from fastapi.exceptions import ValidationException
 from app.application.dtos.order_dto import OrderDTO, OrderInputDTO, OrderResponseDTO
 from app.application.dtos.order_item_dto import OrderItemResponseDTO
 from app.core.exceptions import ApplicationException
+from app.core.request_context import get_current_user_id
 from app.domain.entities.order_entity import OrderCompleteEntity, OrderEntity
 from app.domain.entities.order_item_entity import OrderItemEntity
 from app.domain.entities.product_entity import ProductEntity
@@ -56,6 +57,7 @@ class OrderService:
             order_date=datetime.now(),
             status=OrderStatus.PENDING.value,
             total_amount=total_amount,
+            user_id=get_current_user_id(),
         )
         return order_entity, items
 
@@ -93,6 +95,7 @@ class OrderService:
                 status=response_order.status,
                 total_amount=response_order.total_amount,
                 items=items_dtos,
+                user_id=response_order.user_id,
             )
         except ValidationException:
             raise
@@ -125,6 +128,7 @@ class OrderService:
                     status=order_entity.status,
                     total_amount=order_entity.total_amount,
                     items=items_dtos,
+                    user_id=order_entity.user_id,
                 )
                 orders_dtos.append(order_dto)
             return orders_dtos

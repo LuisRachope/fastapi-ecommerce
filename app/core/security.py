@@ -5,7 +5,6 @@ from passlib.context import CryptContext
 
 from app.core.config import settings
 
-# Contexto de criptografia para senhas
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 

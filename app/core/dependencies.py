@@ -5,6 +5,7 @@ from app.application.services.auth_service import AuthService
 from app.application.services.order_item_service import OrderItemService
 from app.application.services.order_service import OrderService
 from app.application.services.product_service import ProductService
+from app.core.request_context import set_current_user
 from app.core.security import decode_access_token
 from app.infrastructure.persistence.repositories.order_item_repository_impl import (
     SQLOrderItemRepository,
@@ -109,6 +110,7 @@ async def get_current_user(
 
     try:
         user = await auth_service.get_current_user(email)
+        set_current_user(user)
         return user
     except Exception:
         raise credentials_exception

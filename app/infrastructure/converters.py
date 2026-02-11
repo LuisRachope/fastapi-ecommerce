@@ -44,6 +44,7 @@ class OrderConverter:
             order_date=orm.order_date,
             status=orm.status,
             total_amount=orm.total_amount,
+            user_id=orm.user_id,
         )
 
     @staticmethod
@@ -53,6 +54,7 @@ class OrderConverter:
             order_date=entity.order_date,
             status=entity.status,
             total_amount=entity.total_amount,
+            user_id=entity.user_id,
         )
 
     @staticmethod
@@ -63,6 +65,7 @@ class OrderConverter:
             order_date=orm.order_date,
             status=orm.status,
             total_amount=orm.total_amount,
+            user_id=orm.user_id,
         )
         order_entity.items = items
         return order_entity

@@ -10,11 +10,13 @@ class OrderEntity:
         order_date: datetime = None,
         status: str = None,
         total_amount: float = None,
+        user_id: int = None,
     ):
         self.id = id or None
         self.order_date = order_date
         self.status = status
         self.total_amount = total_amount
+        self.user_id = user_id
 
 
 class OrderCompleteEntity(OrderEntity):
@@ -25,6 +27,7 @@ class OrderCompleteEntity(OrderEntity):
         status: str = None,
         total_amount: float = None,
         items: list[OrderItemEntity] = None,
+        user_id: int = None,
     ):
-        super().__init__(id, order_date, status, total_amount)
+        super().__init__(id, order_date, status, total_amount, user_id)
         self.items: list[OrderItemEntity] = items or []

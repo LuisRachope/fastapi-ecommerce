@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from app.application.dtos.product_dto import CreateProductDTO
+from app.application.dtos.user_dto import UserResponseDTO
 from app.application.services.product_service import ProductService
-from app.core.dependencies import get_product_service
+from app.core.dependencies import get_current_user, get_product_service
 from app.core.exceptions import ApplicationException
 from app.presentation.schemas.product_schema import (
     CreateProductInput,
@@ -22,6 +23,7 @@ router = APIRouter(prefix="/products", tags=["Products"])
 )
 async def create_product(
     request: CreateProductInput,
+    current_user: UserResponseDTO = Depends(get_current_user),
     service: ProductService = Depends(get_product_service),
 ):
     """
@@ -55,6 +57,7 @@ async def create_product(
 async def get_all_products(
     skip: int = Query(0, ge=0, description="Número de itens a pular"),
     limit: int = Query(10, ge=1, le=100, description="Limite de itens a retornar"),
+    current_user: UserResponseDTO = Depends(get_current_user),
     service: ProductService = Depends(get_product_service),
 ):
     """
@@ -79,6 +82,7 @@ async def get_all_products(
 )
 async def get_product_by_id(
     product_id: int,
+    current_user: UserResponseDTO = Depends(get_current_user),
     service: ProductService = Depends(get_product_service),
 ):
     """
@@ -103,6 +107,7 @@ async def get_product_by_id(
 async def patch_product_by_id(
     product_id: int,
     body: UpdateProductInput,
+    current_user: UserResponseDTO = Depends(get_current_user),
     service: ProductService = Depends(get_product_service),
 ):
     """
@@ -124,6 +129,7 @@ async def patch_product_by_id(
 )
 async def delete_product_by_id(
     product_id: int,
+    current_user: UserResponseDTO = Depends(get_current_user),
     service: ProductService = Depends(get_product_service),
 ):
     """

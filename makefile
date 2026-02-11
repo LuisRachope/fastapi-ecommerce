@@ -6,5 +6,6 @@ execute:
 autoflake:
 	autoflake --in-place --remove-all-unused-imports --remove-unused-variables --expand-star-imports --recursive app/
 
-pre-commit: autoflake
+pre-commit:
 	pre-commit run --all-files
+	autoflake --in-place --remove-all-unused-imports --remove-unused-variables --expand-star-imports --recursive app/

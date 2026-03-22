@@ -318,31 +318,31 @@ Para dúvidas ou problemas, abra uma issue no repositório.
 
 ### 🔐 Autenticação (`/auth`)
 
-| Método | Endpoint | Descrição | Auth |
-|--------|----------|-----------|------|
-| POST | `/auth/register` | Registrar novo usuário | ❌ |
-| POST | `/auth/login` | Login com email/senha (form data) | ❌ |
-| POST | `/auth/login/json` | Login com JSON | ❌ |
-| GET | `/auth/me` | Obter dados do usuário atual | ✅ |
-| GET | `/auth/users` | Listar todos os usuários | ✅ |
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| POST | `/auth/register` | Registrar novo usuário |
+| POST | `/auth/login` | Login com email/senha (form data) |
+| POST | `/auth/login/json` | Login com JSON |
+| GET | `/auth/me` | Obter dados do usuário atual |
+| GET | `/auth/users` | Listar todos os usuários |
 
 ### 📦 Produtos (`/products`)
 
 | Método | Endpoint | Descrição | Auth |
 |--------|----------|-----------|------|
-| POST | `/products` | Criar novo produto | ✅ |
-| GET | `/products` | Listar produtos com paginação | ✅ |
-| GET | `/products/{product_id}` | Obter produto por ID | ✅ |
-| PATCH | `/products/{product_id}` | Atualizar produto | ✅ |
-| DELETE | `/products/{product_id}` | Deletar produto | ✅ |
+| POST | `/products` | Criar novo produto |
+| GET | `/products` | Listar produtos com paginação |
+| GET | `/products/{product_id}` | Obter produto por ID |
+| PATCH | `/products/{product_id}` | Atualizar produto |
+| DELETE | `/products/{product_id}` | Deletar produto |
 
 ### 🛒 Pedidos (`/orders`)
 
 | Método | Endpoint | Descrição | Auth |
 |--------|----------|-----------|------|
-| POST | `/orders/create` | Criar novo pedido | ✅ |
-| GET | `/orders` | Listar todos os pedidos | ✅ |
-| DELETE | `/orders/{order_id}` | Deletar pedido | ✅ |
+| POST | `/orders/create` | Criar novo pedido |
+| GET | `/orders` | Listar todos os pedidos |
+| DELETE | `/orders/{order_id}` | Deletar pedido |
 
 ### 🏥 Health Check
 

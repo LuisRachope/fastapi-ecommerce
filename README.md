@@ -292,29 +292,13 @@ DOCS_URL=/docs
 REDOC_URL=/redoc
 ```
 
-## 🤝 Contribuindo
-
-Para contribuir com o projeto:
-
-1. Faça um fork do repositório
-2. Crie uma branch para sua feature (`git checkout -b feature/nova-feature`)
-3. Commit suas mudanças (`git commit -m 'Add nova feature'`)
-4. Push para a branch (`git push origin feature/nova-feature`)
-5. Abra um Pull Request
-
-## 📄 Licença
-
-Este projeto está licenciado sob a MIT License - veja o arquivo LICENSE para detalhes.
-
-## 👨‍💻 Autor
-
-Desenvolvido como projeto de referência em Clean Architecture com FastAPI.
-
-## 📞 Suporte
-
-Para dúvidas ou problemas, abra uma issue no repositório.
-
 ## 📌 Endpoints Principais
+
+### 🏥 Health Check
+
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| GET | `/ping` | Health check da API |
 
 ### 🔐 Autenticação (`/auth`)
 
@@ -328,8 +312,8 @@ Para dúvidas ou problemas, abra uma issue no repositório.
 
 ### 📦 Produtos (`/products`)
 
-| Método | Endpoint | Descrição | Auth |
-|--------|----------|-----------|------|
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
 | POST | `/products` | Criar novo produto |
 | GET | `/products` | Listar produtos com paginação |
 | GET | `/products/{product_id}` | Obter produto por ID |
@@ -338,17 +322,11 @@ Para dúvidas ou problemas, abra uma issue no repositório.
 
 ### 🛒 Pedidos (`/orders`)
 
-| Método | Endpoint | Descrição | Auth |
-|--------|----------|-----------|------|
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
 | POST | `/orders/create` | Criar novo pedido |
 | GET | `/orders` | Listar todos os pedidos |
 | DELETE | `/orders/{order_id}` | Deletar pedido |
-
-### 🏥 Health Check
-
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| GET | `/ping` | Health check da API |
 
 ## 🔐 Autenticação
 

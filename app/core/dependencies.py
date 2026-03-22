@@ -1,10 +1,10 @@
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 
-from app.application.services.auth_service import AuthService
-from app.application.services.order_item_service import OrderItemService
-from app.application.services.order_service import OrderService
-from app.application.services.product_service import ProductService
+from app.application.use_cases.auth_use_case import AuthUseCase
+from app.application.use_cases.order_item_use_case import OrderItemUseCase
+from app.application.use_cases.order_use_case import OrderUseCase
+from app.application.use_cases.product_use_case import ProductUseCase
 from app.core.request_context import set_current_user
 from app.core.security import decode_access_token
 from app.infrastructure.persistence.repositories.order_item_repository_impl import (
@@ -32,37 +32,37 @@ class DependencyContainer:
         self._repositories["user_repository"] = SQLUserRepository()
 
     def _initialize_services(self):
-        """Initialize all services with repository dependencies"""
-        self._services["product_service"] = ProductService(
+        """Initialize all use cases with repository dependencies"""
+        self._services["product_use_case"] = ProductUseCase(
             product_repository=self._repositories["product_repository"]
         )
 
-        self._services["order_service"] = OrderService(
+        self._services["order_use_case"] = OrderUseCase(
             order_repository=self._repositories["order_repository"],
             order_item_repository=self._repositories["order_item_repository"],
             product_repository=self._repositories["product_repository"],
         )
 
-        self._services["order_item_service"] = OrderItemService(
+        self._services["order_item_use_case"] = OrderItemUseCase(
             order_item_repository=self._repositories["order_item_repository"],
         )
 
-        self._services["auth_service"] = AuthService(
+        self._services["auth_use_case"] = AuthUseCase(
             user_repository=self._repositories["user_repository"],
         )
 
-    # Service getters
-    def get_product_service(self) -> ProductService:
-        return self._services["product_service"]
+    # Use case getters
+    def get_product_use_case(self) -> ProductUseCase:
+        return self._services["product_use_case"]
 
-    def get_order_service(self) -> OrderService:
-        return self._services["order_service"]
+    def get_order_use_case(self) -> OrderUseCase:
+        return self._services["order_use_case"]
 
-    def get_order_item_service(self) -> OrderItemService:
-        return self._services["order_item_service"]
+    def get_order_item_use_case(self) -> OrderItemUseCase:
+        return self._services["order_item_use_case"]
 
-    def get_auth_service(self) -> AuthService:
-        return self._services["auth_service"]
+    def get_auth_use_case(self) -> AuthUseCase:
+        return self._services["auth_use_case"]
 
 
 # Global container instance
@@ -70,25 +70,25 @@ dependency_container = DependencyContainer()
 
 
 # FastAPI dependency functions
-def get_product_service() -> ProductService:
-    return dependency_container.get_product_service()
+def get_product_use_case() -> ProductUseCase:
+    return dependency_container.get_product_use_case()
 
 
-def get_order_service() -> OrderService:
-    return dependency_container.get_order_service()
+def get_order_use_case() -> OrderUseCase:
+    return dependency_container.get_order_use_case()
 
 
-def get_order_item_service() -> OrderItemService:
-    return dependency_container.get_order_item_service()
+def get_order_item_use_case() -> OrderItemUseCase:
+    return dependency_container.get_order_item_use_case()
 
 
-def get_auth_service() -> AuthService:
-    return dependency_container.get_auth_service()
+def get_auth_use_case() -> AuthUseCase:
+    return dependency_container.get_auth_use_case()
 
 
 async def get_current_user(
     token: str = Depends(oauth2_scheme),
-    auth_service: AuthService = Depends(get_auth_service),
+    auth_service: AuthUseCase = Depends(get_auth_use_case),
 ):
     """
     Dependency que valida o token JWT e retorna o usuário atual.

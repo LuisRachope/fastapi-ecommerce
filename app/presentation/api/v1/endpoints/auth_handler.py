@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 from app.application.dtos.user_dto import CreateUserDTO, LoginDTO
-from app.application.services.auth_service import AuthService
-from app.core.dependencies import get_auth_service, get_current_user
+from app.application.use_cases.auth_use_case import AuthUseCase
+from app.core.dependencies import get_auth_use_case, get_current_user
 from app.core.exceptions import ApplicationException, AuthenticationException, ValidationException
 from app.presentation.schemas.user_schema import (
     LoginInput,
@@ -26,7 +26,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 )
 async def register(
     request: RegisterUserInput,
-    service: AuthService = Depends(get_auth_service),
+    service: AuthUseCase = Depends(get_auth_use_case),
 ):
     """
     Registra um novo usuário no sistema
@@ -58,7 +58,7 @@ async def register(
 )
 async def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
-    service: AuthService = Depends(get_auth_service),
+    service: AuthUseCase = Depends(get_auth_use_case),
 ):
     """
     Autentica o usuário com email e senha
@@ -92,7 +92,7 @@ async def login(
 )
 async def login_json(
     request: LoginInput,
-    service: AuthService = Depends(get_auth_service),
+    service: AuthUseCase = Depends(get_auth_use_case),
 ):
     """
     Autentica o usuário com email e senha via JSON
@@ -145,7 +145,7 @@ async def list_users(
     skip: int = Query(0, ge=0, description="Número de itens a pular"),
     limit: int = Query(10, ge=1, le=100, description="Limite de itens a retornar"),
     current_user: UserOutput = Depends(get_current_user),
-    service: AuthService = Depends(get_auth_service),
+    service: AuthUseCase = Depends(get_auth_use_case),
 ):
     """
     Lista todos os usuários cadastrados

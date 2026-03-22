@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.application.dtos.order_dto import OrderInputDTO, OrderResponseDTO
 from app.application.dtos.user_dto import UserResponseDTO
-from app.application.services.order_service import OrderService
-from app.core.dependencies import get_current_user, get_order_service
+from app.application.use_cases.order_use_case import OrderUseCase
+from app.core.dependencies import get_current_user, get_order_use_case
 from app.core.exceptions import ApplicationException
 
 router = APIRouter(prefix="/orders", tags=["Orders"])
@@ -19,7 +19,7 @@ router = APIRouter(prefix="/orders", tags=["Orders"])
 async def create_order(
     body: OrderInputDTO,
     current_user: UserResponseDTO = Depends(get_current_user),
-    service: OrderService = Depends(get_order_service),
+    service: OrderUseCase = Depends(get_order_use_case),
 ):
     """
     Cria um novo pedido
@@ -40,7 +40,7 @@ async def create_order(
 )
 async def get_all_orders(
     current_user: UserResponseDTO = Depends(get_current_user),
-    service: OrderService = Depends(get_order_service),
+    service: OrderUseCase = Depends(get_order_use_case),
 ):
     """
     Recupera todos os pedidos
@@ -63,7 +63,7 @@ async def get_all_orders(
 async def delete_order_by_id(
     order_id: str,
     current_user: UserResponseDTO = Depends(get_current_user),
-    service: OrderService = Depends(get_order_service),
+    service: OrderUseCase = Depends(get_order_use_case),
 ):
     """
     Deleta um pedido pelo ID

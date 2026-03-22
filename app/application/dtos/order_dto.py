@@ -42,6 +42,7 @@ class OrderResponseDTO(BaseModel):
     order_date: datetime
     status: str
     total_amount: float
+    user_id: int
     items: list[OrderItemResponseDTO] | None = None
 
     class Config:

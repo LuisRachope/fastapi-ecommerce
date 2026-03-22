@@ -211,3 +211,4 @@ __marimo__/
 .venv/
 venv/
 ecommerce.db
+.python-version

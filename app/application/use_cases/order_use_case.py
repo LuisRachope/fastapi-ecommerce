@@ -16,8 +16,8 @@ from app.domain.repositories.order_repository import OrderRepository
 from app.domain.repositories.product_repository import ProductRepository
 
 
-class OrderService:
-    """Service class for managing orders."""
+class OrderUseCase:
+    """Use case para gerenciar pedidos."""
 
     def __init__(
         self,
@@ -62,7 +62,7 @@ class OrderService:
         return order_entity, items
 
     async def create_order(self, order_data: OrderInputDTO) -> OrderResponseDTO:
-        """Create a new order."""
+        """Cria um novo pedido."""
         try:
             product_id_list = [item.product_id for item in order_data.items]
             products_entity = await self.product_repository.get_bulk_by_ids(product_id_list)
@@ -107,7 +107,7 @@ class OrderService:
             )
 
     async def get_all_orders(self) -> list[OrderResponseDTO]:
-        """Retrieve all orders."""
+        """Recupera todos os pedidos."""
         try:
             orders_entities: list[OrderCompleteEntity] = await self.order_repository.get_all()
             orders_dtos = []
@@ -140,7 +140,7 @@ class OrderService:
             )
 
     async def delete_order_by_id(self, order_id: str) -> bool:
-        """Delete an order by its ID."""
+        """Deleta um pedido pelo seu ID."""
         try:
             order = await self.order_repository.get_by_id(order_id)
             if order is None:

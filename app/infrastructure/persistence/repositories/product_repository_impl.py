@@ -9,7 +9,7 @@ from app.core.exceptions import ApplicationException
 from app.domain.entities.product_entity import ProductEntity
 from app.domain.repositories.product_repository import ProductRepository
 from app.infrastructure.converters import ProductConverter
-from app.infrastructure.persistence.models import ProductORM
+from app.infrastructure.persistence.models.product_orm_model import ProductORM
 
 logger = logging.getLogger(__name__)
 

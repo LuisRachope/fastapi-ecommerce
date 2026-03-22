@@ -23,6 +23,11 @@ class Settings(BaseSettings):
     # CORS
     ALLOWED_ORIGINS: list[str] = ["http://localhost:8080"]
 
+    # JWT Authentication
+    SECRET_KEY: str = "chave-secreta"
+    ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+
     class Config:
         env_file = ".env"
         case_sensitive = True

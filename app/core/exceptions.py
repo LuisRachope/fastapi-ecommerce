@@ -44,6 +44,13 @@ class UnauthorizedException(ApplicationException):
         super().__init__(message, code, status_code=status.HTTP_401_UNAUTHORIZED)
 
 
+class AuthenticationException(ApplicationException):
+    """Exceção para falha de autenticação"""
+
+    def __init__(self, message: str = "Falha na autenticação", code: str = "AUTHENTICATION_FAILED"):
+        super().__init__(message, code, status_code=status.HTTP_401_UNAUTHORIZED)
+
+
 class ForbiddenException(ApplicationException):
     """Exceção para acesso proibido"""
 
